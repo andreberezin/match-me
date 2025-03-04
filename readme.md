@@ -1,8 +1,8 @@
 # Match-Me Web - Quick Set-Up for Testing
 
-Full-stack recommendation application, to connect users based on their mutual musical interests.
+Full-stack recommendation application that connects users based on their mutual musical interests.
 
-NB! Pls uncomment the script and edit src="https://maps.googleapis.com/maps/api/js?key={insertYourGoogleAPIkeyHere}&loading=async&libraries=places&language=en"> to include your own Google API key in client/index.html please.
+Team project with Marius Soon. My role has been building the UX/UI in Figma, converting the design to frontend code, connecting the necessary points to backend API-s, setting up Docker and deploying it in Render.
 
 Quick set-up for testing:
 
