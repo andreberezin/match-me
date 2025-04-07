@@ -27,6 +27,8 @@ export function AuthProvider({children}) {
 				return cachedToken;
 			}*/
 
+			console.log("Service key: ", SERVICE_KEY);
+
 			// If not, request a new one
 			const response = await axios.post(
 				`${VITE_BACKEND_URL}/api/auth/service-token`,
