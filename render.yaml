@@ -5,13 +5,7 @@ services:
     runtime: docker
     rootDir: /
     dockerfilePath: Dockerfile
-    buildCommand: docker build \
-      --build-arg SPRING_FRONTEND_URL=$SPRING_FRONTEND_URL \
-      --build-arg POSTGRES_URL=$POSTGRES_URL \
-      --build-arg POSTGRES_PASSWORD=$POSTGRES_PASSWORD \
-      --build-arg POSTGRES_USERNAME=$POSTGRES_USERNAME \
-      --build-arg SERVICE_KEY=$SERVICE_KEY \
-      -t match-me-backend .
+    buildCommand: docker build --build-arg SPRING_FRONTEND_URL=$SPRING_FRONTEND_URL --build-arg POSTGRES_URL=$POSTGRES_URL --build-arg POSTGRES_PASSWORD=$POSTGRES_PASSWORD --build-arg POSTGRES_USERNAME=$POSTGRES_USERNAME --build-arg SERVICE_KEY=$SERVICE_KEY -t match-me-backend .
     startCommand: docker run -p $PORT:8080 -e SPRING_FRONTEND_URL=$SPRING_FRONTEND_URL -e POSTGRES_URL=$POSTGRES_URL -e POSTGRES_PASSWORD=$POSTGRES_PASSWORD -e SERVICE_KEY=$SERVICE_KEY match-me-backend
     plan: free
 
@@ -21,11 +15,6 @@ services:
     runtime: docker
     rootDir: client
     dockerfilePath: client/Dockerfile
-    buildCommand: cd client && docker build \
-      --build-arg VITE_BACKEND_URL=$VITE_BACKEND_URL \
-      --build-arg VITE_GOOGLE_API=$VITE_GOOGLE_API \
-      --build-arg VITE_GOOGLE_API_KEY=$VITE_GOOGLE_API_KEY \
-      --build-arg VITE_SERVICE_KEY=$VITE_SERVICE_KEY \
-      -t match-me-frontend .
+    buildCommand: cd client && docker build --build-arg VITE_BACKEND_URL=$VITE_BACKEND_URL --build-arg VITE_GOOGLE_API=$VITE_GOOGLE_API --build-arg VITE_GOOGLE_API_KEY=$VITE_GOOGLE_API_KEY --build-arg VITE_SERVICE_KEY=$VITE_SERVICE_KEY -t match-me-frontend .
     startCommand: docker run -p $PORT:5173 -e VITE_BACKEND_URL=$VITE_BACKEND_URL -e VITE_GOOGLE_API=$VITE_GOOGLE_API -e VITE_GOOGLE_API_KEY=$VITE_GOOGLE_API_KEY -e VITE_SERVICE_KEY=$VITE_SERVICE_KEY match-me-frontend
     plan: free
