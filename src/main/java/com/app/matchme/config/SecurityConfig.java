@@ -60,8 +60,10 @@ public class SecurityConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
-        config.setAllowedOrigins(List.of("http://localhost:5173", "https://match-me-20pb.onrender.com/"));
-        config.setAllowedHeaders(List.of("*"));
+        config.setAllowedOrigins(List.of("http://localhost:5173", "https://match-me-20pb.onrender.com/", "http://192.168.3.50:5173"));
+//        config.addAllowedOrigin("*");
+        // config.setAllowedHeaders(List.of("*"))
+        config.setAllowedHeaders(List.of("*", "Origin", "Accept", "Authorization", "X-Requested-With", "Content-Type", "Referer", "Sec-Fetch-Dest", "Sec-Fetch-Mode", "Sec-Fetch-Site", "User-Agent"));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         source.registerCorsConfiguration("/**", config);
         return source;
