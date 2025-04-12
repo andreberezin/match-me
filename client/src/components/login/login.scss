@@ -14,6 +14,11 @@
 	height: 36.25rem;
 	gap: 1.2rem;
 
+	@media (max-width: 440px) {
+	  justify-content: flex-start;
+	  padding-top: 3rem;
+	}
+
 	h1 {
 	  font-size: variables.$font-size-h1;
 	  letter-spacing: 0.1rem;
@@ -114,8 +119,14 @@
 	text-align: center;
 	transition: 0.1s all ease;
 	display: block;
-	position: absolute;
-	bottom: 2rem;
+	//position: absolute;
+	//bottom: 2rem;
+	padding-top: 1rem;
+	width: 100%;
+
+	@media (max-width: 440px) {
+
+	}
 
 	a {
 	  color: variables.$main-pink;

@@ -14,7 +14,7 @@ export function ShowPasswordButton({
 
 	const passwordIds = useMemo(() => {
 		if (login) {
-			return ['login'];
+			return ['password-login'];
 		}
 		if (register) {
 			return ['password', 'rePassword'];

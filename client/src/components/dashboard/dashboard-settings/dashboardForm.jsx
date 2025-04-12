@@ -499,14 +499,14 @@ export function DashboardForm({myData, setMyData, setMyDataFormatted, formatData
 							<div className={`location-option ${!useCurrentLocation ? 'active' : ''}`} onClick={() => {
 								setUseCurrentLocation(false);
 							}}>
-								Search for location
+								Search location
 							</div>
 							<div className={`location-option ${useCurrentLocation ? 'active' : ''}`} onClick={() => {
 								requestLocation();
 								setUseCurrentLocation(true);
 								setGeoLoading(true);
 							}}>
-								My current location
+								Current location
 							</div>
 						</div>
 
