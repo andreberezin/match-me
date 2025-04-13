@@ -6,7 +6,7 @@ import {yupResolver} from '@hookform/resolvers/yup';
 import {stepOneSchema} from './validationSchema.jsx';
 import {ErrorElement} from '../reusables/errorElement.jsx';
 import axios from 'axios';
-import React, {useState} from 'react';
+import {useState} from 'react';
 import {IncrementDecrementButtons} from '../reusables/incrementDecrementButtons.jsx';
 import {ShowPasswordButton} from '../reusables/showPasswordButton.jsx';
 import '../reusables/settings-popup.scss';
@@ -192,7 +192,7 @@ function Step1({formOneData, setFormOneData, onSubmit}) {
 									}
 									await trigger('email');
 								}
-								trigger('email');
+								await trigger('email');
 							}}
 						/>
 						<ErrorElement errors={errors} id={'email'}/>

@@ -1,9 +1,9 @@
-import {createContext, useContext, useEffect, useState} from 'react';
+import {createContext, useCallback, useContext, useEffect, useState} from 'react';
 import axios from 'axios';
 import SockJS from 'sockjs-client';
 import {Client} from '@stomp/stompjs';
 
-const AuthContext = createContext();
+const AuthContext = createContext(undefined);
 
 export function AuthProvider({children}) {
 	const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
@@ -18,7 +18,7 @@ export function AuthProvider({children}) {
 	const SERVICE_KEY = import.meta.env.VITE_SERVICE_KEY; // Add this to your .env file
 
 	// Get or refresh the service token
-	const getServiceToken = async () => {
+	const getServiceToken = useCallback(async () => {
 		try {
 			// Check if we have a cached service token
 			/*let cachedToken = sessionStorage.getItem('serviceToken');
@@ -47,10 +47,10 @@ export function AuthProvider({children}) {
 			console.error('Failed to get service token:', error);
 			return null;
 		}
-	};
+	}, [SERVICE_KEY, VITE_BACKEND_URL]);
 
 	// Fetch data with the appropriate token based on the request type
-	const fetchWithToken = async (url, options = {}, useServiceToken = false) => {
+	const fetchWithToken = useCallback(async (url, options = {}, useServiceToken = false) => {
 		let token;
 
 		if (useServiceToken) {
@@ -82,7 +82,7 @@ export function AuthProvider({children}) {
 			...options,
 			headers
 		});
-	};
+	}, [VITE_BACKEND_URL, getServiceToken, serviceTokenValue, tokenValue]);
 
 	// mainly to get profile image url
 	useEffect(() => {
@@ -103,16 +103,47 @@ export function AuthProvider({children}) {
 		};
 
 		if (tokenValue) {
-			getProfileInfo();
+			getProfileInfo().catch(error => {
+				console.error('Unhandled error in getProfileInfo: ', error)
+			});
 		}
-	}, [tokenValue]);
+	}, [fetchWithToken, tokenValue]);
+
+	// Function to broadcast ACTIVE status to all connections
+	const broadcastActiveStatus = useCallback(async (client, userId, token) => {
+		if (!client || !client.connected || !userId) return;
+
+		try {
+			// Get all connections first
+			const response = await axios.get(`${VITE_BACKEND_URL}/api/connections`, {
+				headers: {Authorization: `Bearer ${token}`}
+			});
+
+			const connections = response.data.payload;
+			// console.log('Broadcasting ACTIVE status to all connections:', connections);
+
+			// Send ACTIVE status update to each connection
+			connections.forEach(connectionId => {
+				client.publish({
+					destination: '/app/status',
+					headers: {
+						Authorization: `Bearer ${token}`
+					},
+					body: JSON.stringify({
+						receiverId: connectionId,
+						status: 'ACTIVE'
+					})
+				});
+				// console.log(`Sent ACTIVE status to user ${connectionId}`);
+			});
+		} catch (error) {
+			console.error('Error broadcasting ACTIVE status:', error);
+		}
+	}, [VITE_BACKEND_URL]);
 
 	// Function to set up WebSocket connection
-	const setupWebSocket = async (token, user) => {
+	const setupWebSocket = useCallback(async (token, user) => {
 		if (!user || !user.username || !token) return;
-
-		// Normalize username: Remove spaces and replace them with underscores
-		const normalizedUsername = user.username.trim().replace(/\s+/g, '_');
 
 		try {
 			const socket = new SockJS('/ws');
@@ -143,42 +174,11 @@ export function AuthProvider({children}) {
 			console.error('Error setting up WebSocket:', error);
 			return null;
 		}
-	};
+	}, [broadcastActiveStatus]);
 
-	// Function to broadcast ACTIVE status to all connections
-	const broadcastActiveStatus = async (client, userId, token) => {
-		if (!client || !client.connected || !userId) return;
-
-		try {
-			// Get all connections first
-			const response = await axios.get(`${VITE_BACKEND_URL}/api/connections`, {
-				headers: {Authorization: `Bearer ${token}`}
-			});
-
-			const connections = response.data.payload;
-			// console.log('Broadcasting ACTIVE status to all connections:', connections);
-
-			// Send ACTIVE status update to each connection
-			connections.forEach(connectionId => {
-				client.publish({
-					destination: '/app/status',
-					headers: {
-						Authorization: `Bearer ${token}`
-					},
-					body: JSON.stringify({
-						receiverId: connectionId,
-						status: 'ACTIVE'
-					})
-				});
-				// console.log(`Sent ACTIVE status to user ${connectionId}`);
-			});
-		} catch (error) {
-			console.error('Error broadcasting ACTIVE status:', error);
-		}
-	};
 
 	// Function to send a specific status to all connections
-	const broadcastStatus = async (client, userId, status, token) => {
+	const broadcastStatus = useCallback(async (client, userId, status, token) => {
 		if (!client || !client.connected || !userId) return;
 
 		const actualToken = token || tokenValue;
@@ -207,10 +207,10 @@ export function AuthProvider({children}) {
 		} catch (error) {
 			console.error(`Error broadcasting ${status} status:`, error);
 		}
-	};
+	}, [fetchWithToken, tokenValue]);
 
 	// Enhanced beforeunload handler to handle tab close
-	const handleBeforeUnload = (event) => {
+	const handleBeforeUnload = useCallback((event) => {
 		if (webSocketClient && webSocketClient.connected && userId) {
 			// Set a message for some browsers
 			event.preventDefault();
@@ -243,11 +243,11 @@ export function AuthProvider({children}) {
 				console.error('Failed to send WebSocket offline status on page unload', e);
 			}
 		}
-	};
+	}, [VITE_BACKEND_URL, tokenValue, userId, webSocketClient]);
 
 	// validate token
 	useEffect(() => {
-		const validateToken = async () => {
+		(async () => {
 			setIsLoading(true);
 			const token = sessionStorage.getItem('token');
 
@@ -294,9 +294,7 @@ export function AuthProvider({children}) {
 			} finally {
 				setIsLoading(false);
 			}
-		};
-
-		validateToken();
+		})();
 
 		// Set up beforeunload event listener to handle tab/browser close
 		window.addEventListener('beforeunload', handleBeforeUnload);
@@ -306,12 +304,16 @@ export function AuthProvider({children}) {
 			// Clean up WebSocket connection
 			if (webSocketClient) {
 				if (webSocketClient.connected && userId) {
-					broadcastStatus(webSocketClient, userId, 'INACTIVE');
+					broadcastStatus(webSocketClient, userId, 'INACTIVE', tokenValue).catch(error => {
+						console.error('Unhandled error in broadcastStatus: ', error)
+					});
 				}
 				webSocketClient.deactivate();
 			}
 		};
-	}, [VITE_BACKEND_URL]);
+		// removed commented out dependencies because they caused a loop
+		// eslint-disable-next-line
+	}, [VITE_BACKEND_URL, broadcastStatus, getServiceToken, userId, setupWebSocket]); // handleBeforeUnload, webSocketClient
 
 	// Handle visibility change (tab switching) - FIXED
 	useEffect(() => {
@@ -320,7 +322,9 @@ export function AuthProvider({children}) {
 
 			if (document.visibilityState === 'visible') {
 				// User has returned to the tab - set status to ACTIVE
-				broadcastStatus(webSocketClient, userId, 'ACTIVE', tokenValue);
+				broadcastStatus(webSocketClient, userId, 'ACTIVE', tokenValue).catch(error => {
+					console.error('Unhandled error in broadcastStatus: ', error)
+				});
 			}
 			// IMPORTANT: Don't change the status when the tab is not visible
 			// We keep them as ACTIVE for as long as they're logged in
@@ -331,7 +335,7 @@ export function AuthProvider({children}) {
 		return () => {
 			document.removeEventListener('visibilitychange', handleVisibilityChange);
 		};
-	}, [webSocketClient, userId, tokenValue]);
+	}, [webSocketClient, userId, tokenValue, broadcastStatus]);
 
 	// Heartbeat system to keep track of active users - IMPROVED
 	useEffect(() => {
@@ -349,7 +353,9 @@ export function AuthProvider({children}) {
 				});
 
 				// Also rebroadcast ACTIVE status periodically to all connections
-				broadcastStatus(webSocketClient, userId, 'ACTIVE', tokenValue);
+				broadcastStatus(webSocketClient, userId, 'ACTIVE', tokenValue).catch(error => {
+					console.error('Unhandled error in broadcastStatus: ', error)
+				});
 			} catch (e) {
 				console.error('Failed to send heartbeat', e);
 			}
@@ -358,7 +364,7 @@ export function AuthProvider({children}) {
 		return () => {
 			clearInterval(heartbeatInterval);
 		};
-	}, [webSocketClient, userId, tokenValue]);
+	}, [webSocketClient, userId, tokenValue, broadcastStatus]);
 
 	const login = async (token) => {
 		sessionStorage.setItem('token', token);
@@ -428,7 +434,7 @@ export function AuthProvider({children}) {
 	);
 }
 
-// This is the important export that was missing
+// eslint-disable-next-line
 export function useAuth() {
 	return useContext(AuthContext);
 }

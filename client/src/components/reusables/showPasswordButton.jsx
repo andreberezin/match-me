@@ -20,6 +20,7 @@ export function ShowPasswordButton({
 			return ['password', 'rePassword'];
 		}
 		return ['currentPassword', 'newPassword', 'reNewPassword'];
+		// eslint-disable-next-line
 	}, [login, register, changePassword]);
 
 	const togglePasswordVisibility = useCallback(() => {

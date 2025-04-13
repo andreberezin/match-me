@@ -41,7 +41,7 @@ export const useGooglePlacesApi = () => {
 					setOptions([]);
 				}
 			}
-		);
+		).catch(error => console.error('Unhandled error at getPlacePredictions: ', error));
 	}, [apiLoaded]);
 
 	return {apiLoaded, autocompleteServiceRef, fetchPlaces, options};

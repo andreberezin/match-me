@@ -7,9 +7,11 @@
   @include variables.centered-column;
   justify-content: flex-start;
 
-  //.description-container {
-	//max-height: 1rem;
-  //}
+  .description-container {
+	@media (min-width: 768px) {
+	  margin-top: 3rem;
+	}
+  }
 
   //@media (max-width: 768px) {
 	//justify-content: center;
@@ -38,9 +40,20 @@
   }
 
   .profile-card-container {
-	margin-top: 0.5rem;
+	margin-top: 4rem;
+	justify-content: flex-start;
+
 	@media (max-width: 768px) {
 	  margin-top: 1rem;
+	  justify-content: center;
+	}
+
+	.picture-bio-container {
+	  @media (min-width: 768px) {
+	  	margin-top: 4rem;
+		justify-content: center;
+		max-height: 50%;
+	  }
 	}
 
 	.name-container {
@@ -65,8 +78,16 @@
 	align-items: center;
 	transition: all 0.1s ease-in-out;
 
+	@media (max-width: 1200px) {
+	  bottom: 2rem;
+	}
+
 	@media (max-width: 768px) {
 	  bottom: 0.5rem !important;
+	}
+
+	@media (max-width: 1200px) {
+	  bottom: 2rem;
 	}
 
 	&:has(.swiping) {

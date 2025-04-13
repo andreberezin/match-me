@@ -4,7 +4,7 @@ import '../reusables/settings-popup.scss';
 import '../reusables/loadingAnimation.scss';
 import {FaPlay, FaSpotify} from 'react-icons/fa';
 import {IoPlaySkipForward} from 'react-icons/io5';
-import React, {useCallback, useEffect, useRef, useState} from 'react';
+import {useCallback, useEffect, useRef, useState} from 'react';
 import axios from 'axios';
 import {useSwipe} from './useSwipe.jsx';
 import {backToObject, formatData, formatLocation, openSettings} from '../reusables/profile-card-functions.jsx';
@@ -27,9 +27,8 @@ import {
 
 function Recommendations() {
 	const matchContainerRef = useRef(null);
-	const [swipedCount, setSwipedCount] = useState(0);
+	// const [swipedCount, setSwipedCount] = useState(0);
 	const [loading, setLoading] = useState(true);
-	const [loadingSettings, setLoadingSettings] = useState(false);
 	const [matchIDs, setMatchIDs] = useState(['']);
 	const [matches, setMatches] = useState({});
 	const [currentMatchNum, setCurrentMatchNum] = useState(0);
@@ -53,7 +52,7 @@ function Recommendations() {
 
 	// fetch preferences data
 	useEffect(() => {
-		const getPreferencesData = async () => {
+		(async () => {
 
 			try {
 				const response = await axios.get(`${VITE_BACKEND_URL}/api/me/bio`, {
@@ -80,6 +79,8 @@ function Recommendations() {
 					maxMatchRadius: response.data.payload.maxMatchRadius
 				});
 
+				console.log("Max match radius: ", response.data.payload.maxMatchRadius)
+
 			} catch (error) {
 				setError(true);
 				setErrorMessage(error.message);
@@ -92,14 +93,10 @@ function Recommendations() {
 						console.error('Request failed:', error.message); // Network error or request issue
 					}
 				}
-			} finally {
-				// setLoading(false);
-				setLoadingSettings(false);
 			}
-		};
-		getPreferencesData();
+		})();
 
-	}, []);
+	}, [VITE_BACKEND_URL, tokenValue]);
 
 	// fetch IDs of matched users
 	useEffect(() => {
@@ -107,7 +104,7 @@ function Recommendations() {
 		const signal = controller.signal;
 
 		// if (matchIDs.length <= 1) { // no need to fetch matches if already available
-		const getAllMatches = async () => {
+		(async () => {
 			try {
 				const response = await axios.get(`${VITE_BACKEND_URL}/api/recommendations`, {
 					headers: {Authorization: `Bearer ${tokenValue}`},
@@ -135,17 +132,16 @@ function Recommendations() {
 				}
 				setLoading(false); // Always set loading to false on error
 			}
-		};
-		getAllMatches();
+		})();
 
 		return () => controller.abort(); // Cleanup function to abort request
-	}, [fetchMoreMatches]);
+	}, [VITE_BACKEND_URL, fetchMoreMatches, tokenValue]);
 
 	// if match ids are fetched from server then fetch the data for all the ids
 	useEffect(() => {
 
 		if (matchIDs.length > 0 && matchIDs[0] !== '') {
-			const getMatchData = async () => {
+			(async () => {
 				try {
 					// Create an array of promises that fetch both profile and user data for each match
 					const matchPromises = matchIDs.map(id => {
@@ -178,14 +174,14 @@ function Recommendations() {
 						console.error('Request failed:', error.message); // Network error or request issue
 					}
 				}
-			};
-			getMatchData();
+			})();
+
 		} else if (matchIDs.length === 0 && matchIDs.length !== null){
 			setLoading(false);
 		}
 
 
-	}, [matchIDs]);
+	}, [fetchWithToken, matchIDs]);
 
 
 	// logic when user swipes left or right (likes or dislikes)
@@ -196,7 +192,7 @@ function Recommendations() {
 
 		setButtonDisabled(true);
 
-		setSwipedCount(prev => prev + 1);
+		// setSwipedCount(prev => prev + 1);
 
 		if (likeOrDislike === 'like') {
 			swipedRight = true;
@@ -209,7 +205,7 @@ function Recommendations() {
 		}
 
 		// send data to backend
-		const swipedUser = async () => {
+		(async () => {
 			try {
 				// Create a direct JSON object with primitive values
 				const requestData = {
@@ -245,9 +241,7 @@ function Recommendations() {
 				setError(true);
 				setErrorMessage(error.response?.data?.message || error.message);
 			}
-		};
-
-		swipedUser();
+		})();
 
 		setTimeout(() => {
 			resetPosition({target: matchContainer});
@@ -380,7 +374,6 @@ function Recommendations() {
 
 									<div className='settings-container'>
 										<button className='settings-button' onClick={() => {
-											setLoadingSettings(true);
 											openSettings();
 										}}>
 											<GiSettingsKnobs/>
@@ -553,8 +546,8 @@ function Recommendations() {
 								<div
 									className='match-buttons-container mobile-buttons'>
 									<button className='dislike-button' id={'dislike-button'}
-											onTouchStart={() => {
-												handleTouchStart();
+											onTouchStart={(event) => {
+												handleTouchStart(event);
 												toggleLikeButtons();
 											}}
 											onTouchMove={handleTouchMove}

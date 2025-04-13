@@ -15,7 +15,7 @@ export function IncrementDecrementButtons({id, watch, setValue, trigger, setForm
 				tabIndex={-1}
 				className={'number-field increment'}
 				onMouseDown={(e) => e.preventDefault()} // Prevents losing focus and triggering validation
-				onClick={(e) => {
+				onClick={() => {
 					if (document.activeElement.id !== id) {
 						document.getElementById(id).focus();
 					}
@@ -36,7 +36,7 @@ export function IncrementDecrementButtons({id, watch, setValue, trigger, setForm
 				tabIndex={-1}
 				className={'number-field decrement'}
 				onMouseDown={(e) => e.preventDefault()} // Prevents losing focus and triggering validation
-				onClick={(e) => {
+				onClick={() => {
 					if (document.activeElement.id !== id) {
 						document.getElementById(id).focus();
 					}

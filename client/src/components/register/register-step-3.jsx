@@ -14,12 +14,10 @@ import {useGeolocation} from '../reusables/useGeolocation.jsx';
 const googleApiKey = import.meta.env.VITE_GOOGLE_API_KEY;
 
 function Step3({formThreeData, setFormThreeData, stepFunctions, formOneData, onSubmit}) {
-	const [inputValue, setInputValue] = useState('');
 	const [useCurrentLocation, setUseCurrentLocation] = useState(false);
-	const [maxMatchRadius, setMaxMatchRadius] = useState(formThreeData.maxMatchRadius || 50);
 	const [dots, setDots] = useState('.');
 
-	const {apiLoaded, autocompleteServiceRef, fetchPlaces, options} = useGooglePlacesApi();
+	const {fetchPlaces, options} = useGooglePlacesApi();
 
 	// Use our geolocation hook
 	const {location: geolocation, requestLocation} = useGeolocation({
@@ -94,12 +92,11 @@ function Step3({formThreeData, setFormThreeData, stepFunctions, formOneData, onS
 					});
 			}
 		}
-	}, [geolocation, useCurrentLocation, setValue, setFormThreeData, googleApiKey]);
+	}, [geolocation, useCurrentLocation, setValue, setFormThreeData, setError]);
 
 	// Handle max distance change
 	const handleMaxDistanceChange = (e) => {
 		const value = parseInt(e.target.value, 10);
-		setMaxMatchRadius(value);
 		setValue('maxMatchRadius', value, {shouldValidate: true});
 		setFormThreeData((prev) => ({
 			...prev,
@@ -107,9 +104,12 @@ function Step3({formThreeData, setFormThreeData, stepFunctions, formOneData, onS
 		}));
 	};
 
+
 	useEffect(() => {
+		let interval;
+
 		if (!geolocation?.loaded) {
-			const interval = setInterval(() => {
+			interval = setInterval(() => {
 				setDots(prev => (prev.length < 3 ? prev + '.' : '.'));
 			}, 200);
 			return () => clearInterval(interval);
@@ -119,12 +119,11 @@ function Step3({formThreeData, setFormThreeData, stepFunctions, formOneData, onS
 			setError('location', {type: 'manual', message: geolocation.error.message});
 		}
 
-	}, [geolocation?.loaded]);
+		return () => {
+			if (interval) clearInterval(interval);
+		}
 
-	// Toggle current location usage
-	const toggleLocationUse = () => {
-		setUseCurrentLocation(!useCurrentLocation);
-	};
+	}, [geolocation?.loaded, geolocation.error, setError]);
 
 	return (
 		<form className='step-three'
@@ -215,7 +214,6 @@ function Step3({formThreeData, setFormThreeData, stepFunctions, formOneData, onS
 						<Select
 							options={options}
 							onInputChange={(val) => {
-								setInputValue(val);
 								fetchPlaces(val);
 							}}
 							placeholder='Search for your county'

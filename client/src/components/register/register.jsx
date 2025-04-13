@@ -7,15 +7,10 @@ import Step4 from './register-step-4.jsx';
 import Step5 from './register-step-5.jsx';
 import Step6 from './register-step-6.jsx';
 import {uploadToCloudinary} from '../utils/cloudinary';
+import {handleCloseMenu} from '../reusables/handleCloseMenu.jsx';
 
 import {Link} from 'react-router-dom';
 import axios from 'axios';
-
-export const handleCloseMenu = (selected) => {
-	if (selected.length >= 3) {
-		document.activeElement.blur();
-	}
-};
 
 function Register() {
 	const VITE_BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
@@ -95,7 +90,7 @@ function Register() {
 	};
 
 	// move to next step of registration
-	function AddStep(e) {
+	function AddStep() {
 		setCurrentStep(currentStep + 1);
 	}
 
@@ -107,7 +102,7 @@ function Register() {
 	const stepFunctions = {AddStep: AddStep, DeductStep: DeductStep};
 
 	// handle submitting data for all steps
-	const Submit = async () => {
+	const Submit = async (event) => {
 		setCurrentStep(currentStep + 1);
 		event.preventDefault();
 		const username = formOneData.firstName + ' ' + formOneData.lastName;
@@ -154,8 +149,7 @@ function Register() {
 
 		console.log('Sending:', JSON.stringify(userDetails, null, 2));
 		try {
-			const response = await
-				axios.post(`${VITE_BACKEND_URL}/api/register`, userDetails);
+			await axios.post(`${VITE_BACKEND_URL}/api/register`, userDetails);
 		} catch (error) {
 			if (error.response && error.response.status === 400) {
 				console.log('Failed to register:', error.response.data);

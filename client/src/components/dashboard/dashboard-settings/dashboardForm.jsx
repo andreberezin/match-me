@@ -3,7 +3,6 @@ import {yupResolver} from '@hookform/resolvers/yup';
 import Select from 'react-select';
 import {customStyles} from '../../reusables/customInputStyles.jsx';
 import {
-	genderOptions,
 	genreOptions,
 	goalsOptions,
 	interestsOptions,
@@ -15,7 +14,7 @@ import './forms.scss';
 import '../../reusables/incrementDecrementButtons.scss';
 import '../../reusables/errorElement.scss';
 import {ErrorElement} from '../../reusables/errorElement.jsx';
-import React, {useEffect, useState} from 'react';
+import {useEffect, useState} from 'react';
 import {dashboardFormValidationSchema} from './dashboardFormValidationSchema.jsx';
 import {CustomSelect} from '../../register/register-step-2.jsx';
 import {useGooglePlacesApi} from '../../reusables/useGooglePlacesApi.jsx';
@@ -27,15 +26,15 @@ import useGeolocation from '../../reusables/useGeolocation.jsx';
 
 // bio form page of /dashboard settings
 export function DashboardForm({myData, setMyData, setMyDataFormatted, formatDataForView}) {
-	const {apiLoaded, autocompleteServiceRef, fetchPlaces, options} = useGooglePlacesApi();
-	const googleApiKey = import.meta.env.VITE_GOOGLE_API_KEY;
+	const {fetchPlaces, options} = useGooglePlacesApi();
+	const GOOGLE_API_KEY = import.meta.env.VITE_GOOGLE_API_KEY;
 	const VITE_BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 	const {tokenValue} = useAuth();
 
 	const [useCurrentLocation, setUseCurrentLocation] = useState(false);
 	// const [maxMatchRadius, setMaxMatchRadius] = useState(myData.maxMatchRadius || 50);
 	const [dots, setDots] = useState('.');
-	const [inputValue, setInputValue] = useState('');
+	// const [inputValue, setInputValue] = useState('');
 	const [geoLoading, setGeoLoading] = useState(false);
 
 	// console.log('myData changed');
@@ -79,7 +78,7 @@ export function DashboardForm({myData, setMyData, setMyDataFormatted, formatData
 
 			// Get location name using reverse geocoding
 			if (geolocation.coordinates.lat && geolocation.coordinates.lng) {
-				fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${geolocation.coordinates.lat},${geolocation.coordinates.lng}&key=${googleApiKey}`)
+				fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${geolocation.coordinates.lat},${geolocation.coordinates.lng}&key=${GOOGLE_API_KEY}`)
 					.then(response => response.json())
 					.then(data => {
 						if (data.status === 'OK' && data.results.length > 0) {
@@ -113,19 +112,24 @@ export function DashboardForm({myData, setMyData, setMyDataFormatted, formatData
 					.catch(error => console.error('Geocoding error:', error));
 			}
 		}
-	}, [geolocation, useCurrentLocation, setValue, setMyData, googleApiKey]);
+	}, [geolocation, useCurrentLocation, setValue, setMyData, GOOGLE_API_KEY]);
 
 
 	useEffect(() => {
+		let interval;
+
 		if (!geolocation?.loaded && geoLoading) {
-			const interval = setInterval(() => {
+			interval = setInterval(() => {
 				setDots(prev => (prev.length < 3 ? prev + '.' : '.'));
 			}, 200);
-			return () => clearInterval(interval);
 		}
 
 		if (geolocation.loaded && geoLoading) {
 			setGeoLoading(false);
+		}
+
+		return () => {
+			if (interval) clearInterval(interval);
 		}
 
 	}, [geoLoading, geolocation]);
@@ -133,7 +137,7 @@ export function DashboardForm({myData, setMyData, setMyDataFormatted, formatData
 	// on submit send data to backend
 	const Submit = async (formattedData) => {
 		try {
-			const response = await
+			await
 				axios.patch(`${VITE_BACKEND_URL}/api/me/profile`, formattedData, {
 					headers: {
 						Authorization: `Bearer ${tokenValue}`,
@@ -207,9 +211,9 @@ export function DashboardForm({myData, setMyData, setMyDataFormatted, formatData
 						  longitude: data.longitude,
 					  }
 
-					  SubmitLocation(locationData);
+					  SubmitLocation(locationData).catch(error => console.error('Unhandled error at SubmitLocation: ', error));
 
-					  Submit(formattedData);
+					  Submit(formattedData).catch(error => console.error('Unhandled error at Submit: ', error));
 
 					  setMyDataFormatted((prev) => ({
 						  ...prev,
@@ -514,7 +518,7 @@ export function DashboardForm({myData, setMyData, setMyDataFormatted, formatData
 							<Select
 								options={options}
 								onInputChange={(val) => {
-									setInputValue(val);
+									// setInputValue(val);
 									fetchPlaces(val);
 								}}
 								placeholder='Search for your county'
@@ -538,7 +542,7 @@ export function DashboardForm({myData, setMyData, setMyDataFormatted, formatData
 										return;
 									}
 
-									fetch(`https://maps.googleapis.com/maps/api/geocode/json?place_id=${selectedOption.value}&key=${googleApiKey}&language=en`)
+									fetch(`https://maps.googleapis.com/maps/api/geocode/json?place_id=${selectedOption.value}&key=${GOOGLE_API_KEY}&language=en`)
 										.then(response => response.json())
 										.then(data => {
 											if (data.status === 'OK' && data.results.length > 0) {

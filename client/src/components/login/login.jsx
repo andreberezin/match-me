@@ -3,7 +3,7 @@ import {Link, useNavigate} from 'react-router-dom';
 import axios from 'axios';
 import {ShowPasswordButton} from '../reusables/showPasswordButton.jsx';
 import {useAuth} from '../utils/AuthContext.jsx';
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 
 function Login() {
 	const [email, setEmail] = useState('');
@@ -11,6 +11,7 @@ function Login() {
 	const [error, setError] = useState('placeholder-error');
 	const history = useNavigate();
 	const [showPassword, setShowPassword] = useState(true);
+	const [dots, setDots] = useState('.')
 	const VITE_BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
 	const {login} = useAuth();
@@ -32,14 +33,31 @@ function Login() {
 			// Navigate to dashboard or other protected route
 			history('/dashboard');
 		} catch (error) {
-			setError('Invalid email or password');
 			if (error.response) {
+				setError('Invalid email or password');
 				console.error('Backend error:', error.response.data); // Server responded with an error
 			} else {
+				setError(`Trying to connect to the server`);
 				console.error('Request failed:', error.message); // Network error or request issue
 			}
 		}
 	};
+
+	useEffect(() => {
+		let interval;
+
+		if (error.startsWith('Trying to connect')) {
+			console.log("Starts with: trying to connect");
+			interval = setInterval(() => {
+				setDots(prev => (prev.length < 3 ? prev + '.' : '.'));
+			}, 200);
+		}
+
+		return () => {
+			if (interval) clearInterval(interval);
+		}
+
+	}, [error]);
 
 	return (
 		<div className='login-container'>
@@ -82,7 +100,10 @@ function Login() {
 
 					<Link to='/forgot-password' id='forgot-password' tabIndex={-1}>forgot password?</Link>
 					<p className={`error-message ${error && error !== 'placeholder-error' ? 'visible' : 'hidden'}`}>
-						{error}
+						{error === 'Trying to connect to the server' ?
+							`${error}${dots}` :
+							error
+						}
 					</p>
 				</label>
 				{/*<label id='remember-me-label'>*/}
@@ -105,7 +126,7 @@ function Login() {
 					</button>
 				</label>
 				<div id='no-account-label'>
-					Don't have an account?
+					Don&#39;t have an account?
 					&nbsp;
 					<Link to='/register' tabIndex={-1}>Sign up</Link>
 				</div>

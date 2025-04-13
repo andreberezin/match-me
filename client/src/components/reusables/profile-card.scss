@@ -25,6 +25,9 @@
 	margin-top: 0;
 	padding-bottom: 1rem;
   }
+  @media (min-width: 768px) {
+	margin: 0;
+  }
   // Hover and active states for like/dislike buttons
   &:has(+ .match-buttons-container .like:hover) {
 	border-color: variables.$button-green;
@@ -222,9 +225,9 @@
 	  font-size: 0.8rem;
 	  display: none;
 	}
-	@media (min-width: 1200px) {
-	  margin-top: 3rem;
-	}
+	//@media (min-width: 1200px) {
+	//  margin-top: 1rem;
+	//}
   }
 
   .name-container {
@@ -279,7 +282,7 @@
 }
 
 // smalls screen Media Queries
-@media (max-width: 600px) {
+@media (max-width: 768px) {
   //.recommendations-container, .dashboard-container {
   .profile-card-container {
 	height: 80dvh;

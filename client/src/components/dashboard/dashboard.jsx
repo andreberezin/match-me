@@ -1,24 +1,26 @@
-import React, {useEffect, useRef, useState} from 'react';
+import {useEffect, useRef, useState} from 'react';
 import './dashboard.scss';
-import '../reusables/settings-popup.scss'
-import '../reusables/profile-card.scss'
-import '../reusables/loadingAnimation.scss'
-import { GiSettingsKnobs } from 'react-icons/gi';
-import { IoClose } from "react-icons/io5";
-import { FaSpotify } from 'react-icons/fa';
+import '../reusables/settings-popup.scss';
+import '../reusables/profile-card.scss';
+import '../reusables/loadingAnimation.scss';
+import {GiSettingsKnobs} from 'react-icons/gi';
+import {IoClose} from 'react-icons/io5';
+import {FaSpotify} from 'react-icons/fa';
 import axios from 'axios';
-import { useAuth } from '../utils/AuthContext.jsx';
+import {useAuth} from '../utils/AuthContext.jsx';
 import {
+	backToObject,
+	changeImage,
 	formatData,
 	formatLocation,
 	openSettings,
-	changeImage,
-	backToObject, sendPictureToBackend
+	sendPictureToBackend
 } from '../reusables/profile-card-functions.jsx';
 import {DashboardForm} from './dashboard-settings/dashboardForm.jsx';
 import {
 	genderOptions,
-	genreOptions, goalsOptions,
+	genreOptions,
+	goalsOptions,
 	interestsOptions,
 	methodsOptions,
 	personalityTraitsOptions
@@ -32,15 +34,12 @@ function Dashboard() {
 	const [loadingImage, setLoadingImage] = useState(false);
 	const [myData, setMyData] = useState(null);
 	const [myDataFormatted, setMyDataFormatted] = useState(null);
-	const [liked, setLiked] = useState(0);
 	const { tokenValue } = useAuth();
-	const [formOpen, setFormOpen] = useState(false);
 	const isDataFormatted = useRef(false);
 	const [error, setError] = useState(false);
 	const [errorMessage, setErrorMessage] = useState("");
 	const [settingsContent, setSettingsContent] = useState('profile') // 'statistics' and 'password'
 	const { setImageUrl, username } = useAuth();
-
 	const VITE_BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
 	// fetch user data
@@ -51,7 +50,7 @@ function Dashboard() {
 			const getMyData = async() => {
 				try {
 
-					const [res1, res2, res3, res4] = await Promise.all([
+					const [res1, res2] = await Promise.all([
 						axios.get(`${VITE_BACKEND_URL}/api/me`, {
 							headers: { Authorization: `Bearer ${tokenValue}` },
 							signal
@@ -60,17 +59,15 @@ function Dashboard() {
 							headers: { Authorization: `Bearer ${tokenValue}` },
 							signal
 						}),
-						axios.get(`${VITE_BACKEND_URL}/api/me/bio`, {
-							headers: { Authorization: `Bearer ${tokenValue}` },
-							signal
-						}),
-						axios.get(`${VITE_BACKEND_URL}/api/likedUsers`, {
-							headers: { Authorization: `Bearer ${tokenValue}` },
-							signal
-						})
+						// axios.get(`${VITE_BACKEND_URL}/api/me/bio`, {
+						// 	headers: { Authorization: `Bearer ${tokenValue}` },
+						// 	signal
+						// }),
+						// axios.get(`${VITE_BACKEND_URL}/api/likedUsers`, {
+						// 	headers: { Authorization: `Bearer ${tokenValue}` },
+						// 	signal
+						// })
 					]);
-
-					console.log("me: ", res1.data.payload)
 
 					// formatting data (mostly to objects) for dashboard form
 					const firstName = res1.data.payload.username.split(' ')[0];
@@ -101,9 +98,6 @@ function Dashboard() {
                         // bio: res3.data.payload
                     });
 
-					console.log("My data set");
-
-
 					// data for dashboard itself
 					setMyDataFormatted( {
 							...res1.data.payload,
@@ -111,9 +105,9 @@ function Dashboard() {
 					});
 
 					// liked users count
-					if (res3.data.payload.length) {
-						setLiked(res4.data.payload.length || 0);
-					}
+					// if (res3.data.payload.length) {
+					// 	setLiked(res4.data.payload.length || 0);
+					// }
 
 				} catch (error) {
 					setError(true);
@@ -131,16 +125,16 @@ function Dashboard() {
 					setLoading(false);
 				}
 			}
-			getMyData();
+			void getMyData();
 
 		return () => controller.abort(); // Cleanup function to abort request
-	}, [])
+	}, [tokenValue, VITE_BACKEND_URL])
 
 
 	// format received data
 	const formatDataForView = (data) => {
 		if (data !== null && data && isDataFormatted.current === false) {
-			const updatedProfile = {
+			return {
 				...data,
 				location: formatLocation(data.location),
 				// location: myDataFormatted.location,
@@ -160,7 +154,6 @@ function Dashboard() {
 					? formatData(data.goalsWithMusic)
 					: data.goalsWithMusic
 			};
-			return updatedProfile;
 		}
 		return data;
 	}
@@ -257,7 +250,7 @@ function Dashboard() {
 														...prev,
 														profilePicture: "null",
 													}));
-													sendPictureToBackend(null, tokenValue);
+													sendPictureToBackend(null, tokenValue).catch(error => console.error('Unhandled error at sendPictureToBackend: ', error));
 													setImageUrl("null");
 												}}>
 													<IoClose />

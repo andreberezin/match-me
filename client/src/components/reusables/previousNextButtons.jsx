@@ -1,5 +1,6 @@
 
 // buttons for registration page to move between steps
+// eslint-disable-next-line no-unused-vars
 export const PreviousNextButtons = ({DeductStep, text = "Next", errors = {}, isValid = {} }, ) => {
 	return (
 		<div className={'register-buttons-container'}>

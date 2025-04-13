@@ -25,7 +25,7 @@ function Features() {
 					<div className='feature reverse' id={'connections'}>
 						<PiMusicNotesPlus/>
 						<p className='text'>
-							Choose which of the suggested matches you'd like to connect with in a tinder-like manner.
+							Choose which of the suggested matches you&#39;d like to connect with in a tinder-like manner.
 							See the list of your current and pending connections. Accept pending connections to make
 							more friends or decline them.
 						</p>

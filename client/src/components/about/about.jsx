@@ -2,7 +2,6 @@ import './about.scss';
 
 function About() {
 
-
 	const container = document.querySelector('.about-container');
 	if (container) {
 		console.log("container");
@@ -28,7 +27,7 @@ function About() {
 					<p className={'right'}>
 						Our platform brings musicians from diverse backgrounds and genres together in one space, making
 						it
-						easier than ever to connect with potential bandmates, find jam sessions, and share your passion
+						easier than ever to connect with potential band mates, find jam sessions, and share your passion
 						for
 						music. No matter where you are, Jammer is your global stage for musical discovery.
 					</p>
