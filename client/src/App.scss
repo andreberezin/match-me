@@ -84,7 +84,7 @@ form {
 	margin: 0;
   }
 
-  input, textarea {
+  input:not([type="range"]), textarea {
 	width: 100%;
 	border-radius: 10px;
 	border: 1px solid variables.$input-border-grey;

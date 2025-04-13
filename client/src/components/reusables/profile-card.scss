@@ -18,9 +18,12 @@
   position: relative;
   @media (max-width: 768px) {
 	width: 80%;
+	height: 75dvh;
   }
   @media (max-width: 440px) {
 	width: 90%;
+	margin-top: 0;
+	padding-bottom: 1rem;
   }
   // Hover and active states for like/dislike buttons
   &:has(+ .match-buttons-container .like:hover) {
@@ -46,7 +49,7 @@
 
   .picture-bio-container {
 	width: 100%;
-	height: 60%;
+	//height: 60%;
 	//max-height: 60%;
 	display: flex;
 	flex-direction: row;
@@ -65,6 +68,7 @@
 	  box-sizing: border-box; // Ensure box-sizing is consistent
 	  @media (max-width: 768px) {
 		justify-content: flex-start;
+		max-width: 40%;
 	  }
 	  @media (min-width: 769px) {
 		max-width: 50%;
@@ -82,7 +86,7 @@
 		border-radius: 50%;
 		@media (max-width: 768px) {
 		  justify-content: center;
-		  margin-right: 2rem;
+		  //margin-right: 2rem;
 		}
 
 		img.profile-picture {
@@ -94,8 +98,8 @@
 		  object-position: top;
 		  box-sizing: border-box; // Ensure box-sizing is consistent
 		  @media (max-width: 768px) {
-			max-width: 90%;
-			max-height: 90%;
+			max-width: 100%;
+			max-height: 100%;
 		  }
 		}
 
@@ -216,6 +220,7 @@
 
 	@media (max-width: 440px) {
 	  font-size: 0.8rem;
+	  display: none;
 	}
 	@media (min-width: 1200px) {
 	  margin-top: 3rem;
@@ -229,6 +234,9 @@
 	margin-bottom: 1rem;
 	@media (max-width: 768px) {
 	  font-size: 0.9rem;
+	}
+	@media (max-width: 440px) {
+	  margin-top: auto;
 	}
 
 	.name {
@@ -274,30 +282,30 @@
 @media (max-width: 600px) {
   //.recommendations-container, .dashboard-container {
   .profile-card-container {
-	height: 80vh;
-	margin-top: 2.5rem;
-	padding-top: 1rem;
-	padding-bottom: 2.25rem;
+	height: 80dvh;
+	//margin-top: 2.5rem;
+	//padding-top: 1rem;
+	//padding-bottom: 2.25rem;
 	justify-content: flex-start;
 
 	.picture-bio-container {
 	  flex-direction: column;
-	  height: 65%;
+	  //height: 65%;
 
 	  .picture-container {
 		min-height: 45%;
 		width: auto;
 
 		.extra-picture-container {
-		  margin: 0 0 0.5rem;
+		  //margin: 0 0 0.5rem;
 
 		  img {
 			max-height: 80%;
 		  }
 
 		  .music-link {
-			bottom: 10%;
-			right: -10%;
+			bottom: 5%;
+			right: -15%;
 		  }
 		}
 	  }
@@ -320,7 +328,7 @@
 .description-container {
   font-size: 1rem;
   padding: 1rem 0 1rem 0;
-  flex: 1;
+  //flex: 1;
   @media (max-width: 768px) {
 	font-size: 0.8rem;
   }

@@ -8,13 +8,35 @@
 
   .extra-dashboard-container {
 	@include variables.centered-column;
-	margin-bottom: 1.5rem;
+	//margin-bottom: 1.5rem;
 	max-width: 100%;
   }
 
   .profile-card-container {
 	padding-bottom: 1rem !important;
-	margin-top: 1rem !important;
+	//margin-top: 1rem !important;
+
+	.description-container {
+	  display: block;
+	  flex: 1;
+	}
+
+	.name-container {
+	  padding: 0;
+	  margin: 0;
+	  margin-top: auto;
+	}
+
+	.picture-bio-container {
+
+	  .picture-container {
+		@media (max-width: 440px) {
+		  width: 40%;
+		  min-height: 0;
+		}
+	  }
+
+	}
 
 	.extra-picture-container {
 	  position: relative;
@@ -105,8 +127,8 @@
   .remove-image {
 	all: unset;
 	position: absolute;
-	top: 10%;
-	left: 10%;
+	top: 5%;
+	left: 5%;
 	z-index: 5;
 	cursor: pointer;
 	border-radius: 50px;

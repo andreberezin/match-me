@@ -243,13 +243,13 @@ function Register() {
 							/>
 						)}
 					</div>
-					{currentStep === 1 && (
-						<div id='have-account'>
-							Already have an account?
-							&nbsp;
-							<Link to='/login' tabIndex={-1}>Sign in</Link>
-						</div>
-					)}
+					{/*{currentStep === 1 && (*/}
+					{/*	<div id='have-account'>*/}
+					{/*		Already have an account?*/}
+					{/*		&nbsp;*/}
+					{/*		<Link to='/login' tabIndex={-1}>Sign in</Link>*/}
+					{/*	</div>*/}
+					{/*)}*/}
 				</div>
 			)}
 		</>

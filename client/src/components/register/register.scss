@@ -1,12 +1,16 @@
 @use '../../variables';
 
 .register-container {
-  @include variables.whole-page;
   @include variables.centered-column;
   justify-content: flex-start;
   position: relative;
-  height: 100vh;
   overflow-x: hidden;
+  width: 100%;
+  //height: calc(100vh - 80px);
+  height: 100vh;
+  @media (max-width: 768px) {
+	height: 100dvh;
+  }
 
   .close-settings:hover {
 	box-shadow: none;
@@ -229,7 +233,7 @@
 	  display: flex;
 	  flex-direction: row;
 	  align-items: center;
-	  margin-top: 1rem;
+	  //margin-top: 1rem;
 
 	  button.tc {
 		all: unset;
@@ -387,57 +391,6 @@
 		font-size: 0.8em;
 		margin-top: 5px;
 	  }
-	}
-  }
-
-  /* Distance slider styles */
-  .distance-slider-container {
-	display: flex;
-	align-items: center;
-	margin-top: 10px;
-
-	.distance-slider {
-	  width: 100%;
-	  flex: 1;
-	  height: 5px;
-	  -webkit-appearance: none;
-	  appearance: none;
-	  background: white;
-	  outline: none;
-	  border-radius: 5px;
-
-	  &::-webkit-slider-thumb {
-		-webkit-appearance: none;
-		appearance: none;
-		width: 20px;
-		height: 20px;
-		border-radius: 50%;
-		background: variables.$main-blue;
-		cursor: pointer;
-	  }
-
-	  &::-moz-range-thumb {
-		width: 15px;
-		height: 15px;
-		border-radius: 50%;
-		background: #4CAF50;
-		cursor: pointer;
-	  }
-	}
-  }
-
-  .distance-labels {
-	display: flex;
-	justify-content: space-between;
-	margin-top: 5px;
-	font-size: 0.8em;
-	color: #666;
-
-	.distance-value {
-	  text-align: center;
-	  color: black;
-	  font-size: 1rem;
-	  margin-top: 0.5rem;
 	}
   }
 }
