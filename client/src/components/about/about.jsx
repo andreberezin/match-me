@@ -2,11 +2,19 @@ import './about.scss';
 
 function About() {
 
+
+	const container = document.querySelector('.about-container');
+	if (container) {
+		console.log("container");
+		container.scrollTop = 0;
+	}
+
 	return (
 		<>
-			<div className='about-container'>
 
-				<h1 className={'blinking-text'}>Jammer</h1>
+			<h1 className={'blinking-text'}>Jammer</h1>
+
+			<div className='about-container'>
 
 				<img className={'background-image one'} src={'icon_black.png'} alt={''}/>
 				<img className={'background-image two'} src={'icon_black.png'} alt={''}/>
@@ -27,6 +35,7 @@ function About() {
 					<p className={'mid'}>
 						Join the Jammer community today, and let the music play!
 					</p>
+					<div className={'empty'}></div>
 				</div>
 			</div>
 		</>

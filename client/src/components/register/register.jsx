@@ -176,19 +176,21 @@ function Register() {
 			{currentStep !== 6 && (
 				<div className='register-container'>
 
-					{currentStep !== 6 &&
-						(<div className={'exit-container'}>
-								{/* again a tag to force rerender of nav bar*/}
-								<Link to={'/'}>
-									<button className={'button exit'}>Exit</button>
-								</Link>
+					<div className='upper-part'>
+						{currentStep !== 6 &&
+							(<div className={'exit-container'}>
+									{/* again a tag to force rerender of nav bar*/}
+									<Link to={'/'}>
+										<button className={'button exit'}>Exit</button>
+									</Link>
+								</div>
+							)}
+						{currentStep !== 6 && (
+							<div className={'account-creation'}>
+								Account creation {currentStep}/6
 							</div>
 						)}
-					{currentStep !== 6 && (
-						<div className={'account-creation'}>
-							Account creation {currentStep}/6
-						</div>
-					)}
+					</div>
 					<div className={'forms-container'}>
 						{currentStep === 1 && (
 							<Step1
@@ -241,13 +243,13 @@ function Register() {
 							/>
 						)}
 					</div>
-					{currentStep === 1 && (
-						<div id='have-account'>
-							Already have an account?
-							&nbsp;
-							<Link to='/login' tabIndex={-1}>Sign in</Link>
-						</div>
-					)}
+					{/*{currentStep === 1 && (*/}
+					{/*	<div id='have-account'>*/}
+					{/*		Already have an account?*/}
+					{/*		&nbsp;*/}
+					{/*		<Link to='/login' tabIndex={-1}>Sign in</Link>*/}
+					{/*	</div>*/}
+					{/*)}*/}
 				</div>
 			)}
 		</>

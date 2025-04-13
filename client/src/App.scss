@@ -21,7 +21,8 @@
 
 html, body {
   //min-height: 100%;
-  height: 100vh;
+  //height: 100vh;
+  height: 100%;
   width: 100%;
   background: variables.$background-gradient fixed;
   background-size: cover; // Makes sure it stretches
@@ -52,13 +53,24 @@ form {
 	width: 90%;
   }
 
+  @media (max-width: 768px) {
+	justify-content: space-between;
+	padding-top: 2rem;
+  }
+
+  .form-title {
+	@media (max-width: 440px) {
+	  font-size: 0.7rem !important;
+	}
+  }
+
   .line {
 	width: 100%;
   }
 
   label {
 	width: 100%;
-	font-size: 0.875rem;
+	font-size: 1rem;
   }
 
   input[type='number'] {
@@ -72,13 +84,14 @@ form {
 	margin: 0;
   }
 
-  input, textarea {
+  input:not([type="range"]), textarea {
 	width: 100%;
 	border-radius: 10px;
 	border: 1px solid variables.$input-border-grey;
 	padding-left: 0.75rem;
 	transition: all 0.1s ease;
 	outline: none;
+	font-size: 16px;
 
 	&.not-react-select {
 	  height: 2.375rem;

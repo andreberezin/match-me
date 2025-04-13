@@ -260,7 +260,7 @@ function Step5({
 						isClearable={true}
 						isSearchable={true}
 						name={'matchAge'}
-						placeholder='Select age gap'
+						placeholder='Number gap'
 						options={matchAgeOptions}
 						styles={customStyles}
 						value={formFiveData.matchAge}
@@ -284,7 +284,7 @@ function Step5({
 
 			<div className={'line'}>
 				<label id='experience' className={'short'}>
-					Years of experience*
+					Experience*
 					<br/>
 					<Select
 						className='basic-single short'
@@ -293,7 +293,7 @@ function Step5({
 						isClearable={true}
 						isSearchable={true}
 						name={'matchExperience'}
-						placeholder='Select experience'
+						placeholder='In years'
 						options={matchExperienceOptions}
 						styles={customStyles}
 						value={formFiveData.matchExperience}
@@ -323,7 +323,7 @@ function Step5({
 						isClearable={true}
 						isSearchable={true}
 						name={'matchLocation'}
-						placeholder='Select proximity'
+						placeholder='Proximity'
 						options={matchLocationsOptions}
 						styles={customStyles}
 						value={formFiveData.matchLocation}

@@ -47,7 +47,8 @@
 	  width: 90%;
 	  height: 90%;
 	  align-self: center;
-	  justify-content: space-evenly;
+	  justify-content: center;
+	  align-items: center;
 	}
 
 	.hero-text {
@@ -70,7 +71,8 @@
 	  }
 	  @media (max-width: 440px) {
 		//text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
-		font-size: 1.5rem;
+		width: calc(100% - 52px);
+		font-size: 1.1rem;
 	  }
 	}
 
@@ -81,7 +83,7 @@
 	  align-items: center;
 	  justify-content: center;
 	  @media (max-width: 768px) {
-		padding-top: 0;
+		padding-top: 1.5rem;
 		margin-bottom: 2rem;
 	  }
 

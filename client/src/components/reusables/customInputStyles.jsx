@@ -2,7 +2,7 @@
 export const customStyles = {
 	control: (provided, state) => ({
 		...provided,
-		fontSize: '0.875rem',
+		fontSize: '1',
 		minHeight: '2rem',  // Ensure it starts with a height of 2rem
 		height: 'auto',  // Set to 'auto' so it adjusts based on content
 		width: '100%',
@@ -105,7 +105,7 @@ export const customStyles = {
 		display: 'flex',
 		alignItems: 'center',
 		textAlign: 'center',
-		paddingLeft: '8px'
+		paddingLeft: '0px'
 	}),
 
 	dropdownIndicator: (provided, state) => {

@@ -345,11 +345,11 @@ function Recommendations() {
 			<div className='recommendations-container'>
 				{!error ? (
 					<>
-						{!loading && (
-							<div className='user-stats-container'>
-								<div className='user-stats'>{swipedCount} {swipedCount === 1 ? 'swipe' : 'swipes'}</div>
-							</div>
-						)}
+						{/*{!loading && (*/}
+						{/*	<div className='user-stats-container'>*/}
+						{/*		<div className='user-stats'>{swipedCount} {swipedCount === 1 ? 'swipe' : 'swipes'}</div>*/}
+						{/*	</div>*/}
+						{/*)}*/}
 
 						{!loading && (
 							<div className='settings-popup' id={'settings-popup'}>
@@ -565,7 +565,7 @@ function Recommendations() {
 											style={{
 												width: swipeProgress === 0
 													? '3rem'// Expands only when swipeProgress > 1
-													: `calc(4rem + ${(swipeProgress * 100)}px)`, // Default width
+													: `calc(4rem + ${(swipeProgress * 120)}px)`, // Default width
 												transition: swipeProgress > 0 ? 'all 0.1s ease-out' : 'all 0.2s ease-in',
 												height: swipeProgress === 0 ? '3rem' : 'calc(4rem - 2px)'
 											}}
@@ -588,7 +588,7 @@ function Recommendations() {
 												transition: swipeProgress > 0 ? 'all 0.1s ease-out' : 'all 0.2s ease-in',
 												width: swipeProgress === 0
 													? '3rem'// Expands only when swipeProgress > 1
-													: `calc(4rem + ${(swipeProgress * 100)}px)`, // Default width
+													: `calc(4rem + ${(swipeProgress * 120)}px)`, // Default width
 												height: swipeProgress === 0 ? '3rem' : 'calc(4rem - 2px)'
 											}}
 									>

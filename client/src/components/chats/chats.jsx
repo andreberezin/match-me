@@ -381,7 +381,14 @@ function Chats() {
 											openChat();
 										}}>
 											<div className='connection-info'>
-												<img src='profile_pic_female.jpg' alt='' className='profile-picture'/>
+													{connection.profilePicture && !connection.profilePicture.endsWith('null') ? (
+														<img src={connection.profilePicture} alt={connection.username} className='connection-pic'/>
+													) : (
+														<img src='default_profile_picture.png' alt={connection.username}
+															 className='connection-pic'/>
+													)
+													}
+												{/*<img src={connection.id.profilePicture} alt='' className='profile-picture'/>*/}
 												<div className='name'>{connection.username}</div>
 											</div>
 											<div className='connection-indicators'>

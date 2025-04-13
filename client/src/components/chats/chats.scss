@@ -4,9 +4,7 @@
   @include variables.whole-page;
   @include variables.centered-column;
   position: relative;
-  @media (max-width: 768px) {
-	height: calc(100vh - 64px);
-  }
+
   /* Total unread count badge in header */
   .total-unread-badge {
 	position: absolute;
@@ -481,7 +479,7 @@
 
 		  textarea {
 			flex: 1; /* Makes input take most of the space */
-			padding: 0 1rem 0 1rem;
+			padding: 0 1.5rem 0 1.5rem;
 			border-radius: 50px; /* Rounded edges for modern look */
 			font-size: 1em;
 			outline: none;

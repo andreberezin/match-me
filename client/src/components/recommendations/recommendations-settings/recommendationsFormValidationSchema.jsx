@@ -1,6 +1,6 @@
 import * as yup from 'yup';
 
-export const recommendationsFormValidationSchema =
+export const recommendationsFormValidationSchema = (preferencesData) =>
 	yup.object().shape({
 		idealMatchMethods:
 			yup
@@ -66,4 +66,5 @@ export const recommendationsFormValidationSchema =
 			.max(500, 'Maximum 500 km')
 			// .default(50)
 			.notRequired()
+			.default(preferencesData.maxMatchRadius),
 	});

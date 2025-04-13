@@ -40,6 +40,9 @@ function Features() {
 						</p>
 					</div>
 
+					<div className='feature default' id={'empty'}>
+					</div>
+
 				</div>
 			</div>
 		</>

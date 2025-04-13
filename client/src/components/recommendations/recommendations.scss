@@ -2,16 +2,25 @@
 
 .recommendations-container {
   position: relative;
-  height: calc(100vh - 64px);
+  //height: calc(100vh - 64px);
+  @include variables.whole-page;
   @include variables.centered-column;
   justify-content: flex-start;
+
+  //.description-container {
+	//max-height: 1rem;
+  //}
+
+  //@media (max-width: 768px) {
+	//justify-content: center;
+  //}
 
   .form-title {
 	margin-bottom: 2rem;
   }
 
   .radius {
-	margin-bottom: 1rem;
+	//margin-bottom: 1rem;
   }
 
   .user-stats-container {
@@ -30,8 +39,12 @@
 
   .profile-card-container {
 	margin-top: 0.5rem;
-	@screen (max-width: 768px) {
-	  margin-top: 0;
+	@media (max-width: 768px) {
+	  margin-top: 1rem;
+	}
+
+	.name-container {
+	  padding-bottom: 1rem;
 	}
   }
 
@@ -51,9 +64,9 @@
 	justify-content: space-between;
 	align-items: center;
 	transition: all 0.1s ease-in-out;
-	// for older screens with have more width and less height
-	@media (max-height: 700px) {
-	  bottom: 1rem !important;
+
+	@media (max-width: 768px) {
+	  bottom: 0.5rem !important;
 	}
 
 	&:has(.swiping) {
@@ -206,6 +219,11 @@
 	  flex-direction: column;
 	  justify-content: flex-start;
 	  align-items: center;
+
+	  @media (max-width: 768px) {
+		padding: 1rem 0 0 0;
+	  }
+
 	}
 
 	.settings-buttons-container {

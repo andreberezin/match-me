@@ -104,12 +104,12 @@ function Login() {
 						Login
 					</button>
 				</label>
+				<div id='no-account-label'>
+					Don't have an account?
+					&nbsp;
+					<Link to='/register' tabIndex={-1}>Sign up</Link>
+				</div>
 			</form>
-			<div id='no-account-label'>
-				Don't have an account?
-				&nbsp;
-				<Link to='/register' tabIndex={-1}>Sign up</Link>
-			</div>
 		</div>
 	);
 }

@@ -18,6 +18,7 @@ import React, {useEffect, useState} from 'react';
 import axios from 'axios';
 import {handleCloseMenu} from '../../register/register.jsx';
 import {closeSettings} from '../../reusables/profile-card-functions.jsx';
+import './distanceSlider.scss'
 
 
 export function RecommendationsForm({preferencesData, setPreferencesData, setLoading, resetMatches}) {
@@ -35,7 +36,7 @@ export function RecommendationsForm({preferencesData, setPreferencesData, setLoa
 		formState: { errors },
 	} = useForm({
 		defaultValues: preferencesData,
-		resolver: yupResolver(recommendationsFormValidationSchema),
+		resolver: yupResolver(recommendationsFormValidationSchema(preferencesData)),
 		mode: "onChange",
 	});
 
@@ -148,7 +149,8 @@ export function RecommendationsForm({preferencesData, setPreferencesData, setLoa
 					</div>
 					<div className="distance-labels">
 						<span>5 km</span>
-						<div className="distance-value">{watch('maxMatchRadius')} km</div>
+						{/*<div className="distance-value">{watch('maxMatchRadius')} km</div>*/}
+						<div className="distance-value">{preferencesData.maxMatchRadius} km</div>
 						<span>500 km</span>
 					</div>
 					<ErrorElement errors={errors} id={'maxMatchRadius'}/>

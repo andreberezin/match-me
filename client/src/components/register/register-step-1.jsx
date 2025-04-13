@@ -76,7 +76,7 @@ function Step1({formOneData, setFormOneData, onSubmit}) {
 						First name*
 						<input
 							type='text'
-							placeholder='Enter your first name'
+							placeholder='Enter first name'
 							className={`not-react-select short focus-highlight 
 								${errors.firstName ? 'error' : ''}
 								${!errors.firstName && watch('firstName') ? 'valid' : ''}`}
@@ -93,7 +93,7 @@ function Step1({formOneData, setFormOneData, onSubmit}) {
 						Last name*
 						<input
 							type='text'
-							placeholder='Enter your last name'
+							placeholder='Enter last name'
 							className={`not-react-select short focus-highlight 
 								${errors.lastName ? 'error' : ''}
 								${!errors.lastName && watch('lastName') ? 'valid' : ''}`}
@@ -143,7 +143,7 @@ function Step1({formOneData, setFormOneData, onSubmit}) {
 							<input
 								id={'age'}
 								type='number'
-								placeholder='Enter your age'
+								placeholder='Enter age'
 								className={`not-react-select short focus-highlight 
 									${errors.age ? 'error' : ''}
 									${!errors.age && watch('age') ? 'valid' : ''}`}
@@ -167,7 +167,7 @@ function Step1({formOneData, setFormOneData, onSubmit}) {
 						Email address*
 						<input
 							type='email'
-							placeholder='Enter your email address'
+							placeholder='Enter email address'
 							className={`not-react-select focus-highlight 
 								${errors.email ? 'error' : ''}
 								${!errors.email && watch('email') ? 'valid' : ''}`}

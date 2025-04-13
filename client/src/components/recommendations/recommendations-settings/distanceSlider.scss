@@ -1,0 +1,53 @@
+@use '../../../variables';
+
+/* Distance slider styles */
+.distance-slider-container {
+display: flex;
+align-items: center;
+margin-top: 10px;
+
+.distance-slider {
+  width: 100%;
+  flex: 1;
+  height: 5px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: white;
+  outline: none;
+  border-radius: 5px;
+  padding: 0.25rem !important;
+
+  &::-webkit-slider-thumb {
+	-webkit-appearance: none;
+	appearance: none;
+	width: 25px;
+	height: 25px;
+	border-radius: 50%;
+	background: variables.$main-pink;
+	cursor: pointer;
+	padding: 0.5rem;
+  }
+
+  &::-moz-range-thumb {
+	width: 25px;
+	height: 25px;
+	border-radius: 50%;
+	cursor: pointer;
+  }
+}
+}
+
+.distance-labels {
+display: flex;
+justify-content: space-between;
+margin-top: 5px;
+font-size: 0.8em;
+color: #666;
+
+.distance-value {
+  text-align: center;
+  color: white;
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
+}
+}

@@ -390,9 +390,9 @@ function Dashboard() {
 								</div>
 							</div>
 
-							<div className='user-stats-container'>
-								<div className='user-stats'>You have liked {liked} {liked === 1 ? "jammer" : "jammers"}</div>
-							</div>
+							{/*<div className='user-stats-container'>*/}
+							{/*	<div className='user-stats'>You have liked {liked} {liked === 1 ? "jammer" : "jammers"}</div>*/}
+							{/*</div>*/}
 
 						</>
 					)}

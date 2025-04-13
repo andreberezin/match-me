@@ -35,6 +35,7 @@ function Step3({formThreeData, setFormThreeData, stepFunctions, formOneData, onS
 		setValue,
 		watch,
 		trigger,
+		setError,
 		formState: {errors, isValid}
 	} = useForm({
 		defaultValues: formThreeData,
@@ -87,7 +88,10 @@ function Step3({formThreeData, setFormThreeData, stepFunctions, formOneData, onS
 							setFormThreeData((prev) => ({...prev, location: locationObj}));
 						}
 					})
-					.catch(error => console.error('Geocoding error:', error));
+					.catch(error => {
+						console.error('Geocoding error:', error);
+						setError('location', {type: 'manual', message: geolocation.error.message});
+					});
 			}
 		}
 	}, [geolocation, useCurrentLocation, setValue, setFormThreeData, googleApiKey]);
@@ -110,6 +114,11 @@ function Step3({formThreeData, setFormThreeData, stepFunctions, formOneData, onS
 			}, 200);
 			return () => clearInterval(interval);
 		}
+
+		if (geolocation?.loaded && geolocation.error) {
+			setError('location', {type: 'manual', message: geolocation.error.message});
+		}
+
 	}, [geolocation?.loaded]);
 
 	// Toggle current location usage
@@ -122,13 +131,14 @@ function Step3({formThreeData, setFormThreeData, stepFunctions, formOneData, onS
 			  onSubmit={handleSubmit((data) => onSubmit(data, formThreeData, setFormThreeData))}
 			  autoComplete={'off'}
 			  noValidate>
+
 			<div className='form-title'>
 				<h1>A little bit more...</h1>
 			</div>
 
 			<div className={'line'}>
 				<label id='experience' className={'short'}>
-					Years of experience*
+					Experience*
 					<br/>
 					<div className={'with-button'}>
 						<input
@@ -138,8 +148,8 @@ function Step3({formThreeData, setFormThreeData, stepFunctions, formOneData, onS
 							className={`not-react-select focus-highlight short 
 						${errors.experience ? 'error' : ''}
 						${!errors.experience && watch('experience') ? 'valid' : ''}`}
-							placeholder='Enter number of years'
-							autoFocus={true}
+							placeholder='in years'
+							// autoFocus={true}
 							{...register('experience')}
 							autoComplete={'off'}
 							min={0}
@@ -168,7 +178,7 @@ function Step3({formThreeData, setFormThreeData, stepFunctions, formOneData, onS
 						className={`not-react-select focus-highlight short
 						${errors.musicLink ? 'error' : ''}
 						${!errors.musicLink && watch('musicLink') ? 'valid' : ''}`}
-						placeholder='Link to your Spotify etc'
+						placeholder='Spotify link etc'
 						value={watch('musicLink') || ''}
 						{...register('musicLink')}
 						autoComplete={'off'}
@@ -191,13 +201,13 @@ function Step3({formThreeData, setFormThreeData, stepFunctions, formOneData, onS
 						<div className={`location-option ${!useCurrentLocation ? 'active' : ''}`} onClick={() => {
 							setUseCurrentLocation(false);
 						}}>
-							Search for location
+							Search location
 						</div>
 						<div className={`location-option ${useCurrentLocation ? 'active' : ''}`} onClick={() => {
 							requestLocation();
 							setUseCurrentLocation(true);
 						}}>
-							My current location
+							Current location
 						</div>
 					</div>
 
@@ -275,7 +285,10 @@ function Step3({formThreeData, setFormThreeData, stepFunctions, formOneData, onS
 											}
 										}
 									})
-									.catch(error => console.error('Geocoding error:', error));
+									.catch(error => {
+										console.error('Geocoding error:', error);
+										setError('location', {type: 'manual', message: geolocation.error.message});
+									});
 							}}
 							onBlur={() => trigger('location')} // Trigger validation when user leaves the field
 						/>
@@ -290,9 +303,8 @@ function Step3({formThreeData, setFormThreeData, stepFunctions, formOneData, onS
 							{geolocation?.loaded ? (
 								geolocation.error ? (
 									<div className='location-error'>
-										Error accessing your location. Please allow location access or use search
-										instead.
-										<div className='error-details'>{geolocation.error.message}</div>
+										Please allow location access
+										{/*<div className='error-details'>{geolocation.error.message}</div>*/}
 									</div>
 								) : (
 									geolocation.coordinates.lat ? (
