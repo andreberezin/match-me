@@ -196,191 +196,197 @@ function Dashboard() {
 									<SettingsMenu setSettingsContent={setSettingsContent}/>
 								</div>
 
-								<div
-									// ref={matchContainerRef}
-									id="match-container"
-									className="profile-card-container"
-								>
-									<div className="settings-container">
-										<button className="settings-button" onClick={openSettings}>
-											<GiSettingsKnobs />
-										</button>
-									</div>
+								<div className='extra-profile-card-container'>
 
-									<div className="picture-bio-container">
-										<div className="picture-container">
-											<div className="extra-picture-container">
+									<div
+										// ref={matchContainerRef}
+										id="match-container"
+										className="profile-card-container"
+									>
+										<div className="settings-container">
+											<button className="settings-button" onClick={openSettings}>
+												<GiSettingsKnobs />
+											</button>
+										</div>
+
+										<div className="picture-bio-container">
+											<div className="picture-container">
+												<div className="extra-picture-container">
 
 
-												{loadingImage && (
-													<div className="loading-image">
-														<div className={'spinner-container'}>
-															<div className='spinner endless'>Loading picture...</div>
+													{loadingImage && (
+														<div className="loading-image">
+															<div className={'spinner-container'}>
+																<div className='spinner endless'>Loading picture...</div>
+															</div>
 														</div>
-													</div>
-												)}
+													)}
 
 
-												{!loadingImage && (
-													<>
-														<input type='file'
-															   accept={"image/*"}
-															   name={'image'}
-															   onChange={(event) => changeImage(event, setMyDataFormatted, setImageUrl, tokenValue, setLoadingImage)}
-															   className='file-upload'
-															   title={'click to change picture'}
-														/>
-														{myDataFormatted.profilePicture && !myDataFormatted.profilePicture.endsWith("null") ? (
-															<img src={myDataFormatted.profilePicture} alt={myDataFormatted.username} className='profile-picture' />
-														) : (
-															<img src="default_profile_picture.png" alt={myDataFormatted.username} className='profile-picture' />
-														)
-														}
-													</>
-												)}
+													{!loadingImage && (
+														<>
+															<input type='file'
+																   accept={"image/*"}
+																   name={'image'}
+																   onChange={(event) => changeImage(event, setMyDataFormatted, setImageUrl, tokenValue, setLoadingImage)}
+																   className='file-upload'
+																   title={'click to change picture'}
+															/>
+															{myDataFormatted.profilePicture && !myDataFormatted.profilePicture.endsWith("null") ? (
+																<img src={myDataFormatted.profilePicture} alt={myDataFormatted.username} className='profile-picture' />
+															) : (
+																<img src="default_profile_picture.png" alt={myDataFormatted.username} className='profile-picture' />
+															)
+															}
+														</>
+													)}
 
-												{myDataFormatted.linkToMusic && (
-													<div className="music-link">
-														<FaSpotify style={{ color: '#31D165' }} />
-													</div>
+													{myDataFormatted.linkToMusic && (
+														<div className="music-link">
+															<FaSpotify style={{ color: '#31D165' }} />
+														</div>
 
-												)}
-												<button className="remove-image" onClick={() => {
-													setMyDataFormatted(prev => ({
-														...prev,
-														profilePicture: "null",
-													}));
-													sendPictureToBackend(null, tokenValue).catch(error => console.error('Unhandled error at sendPictureToBackend: ', error));
-													setImageUrl("null");
-												}}>
-													<IoClose />
-												</button>
+													)}
+													<button className="remove-image" onClick={() => {
+														setMyDataFormatted(prev => ({
+															...prev,
+															profilePicture: "null",
+														}));
+														sendPictureToBackend(null, tokenValue).catch(error => console.error('Unhandled error at sendPictureToBackend: ', error));
+														setImageUrl("null");
+													}}>
+														<IoClose />
+													</button>
+												</div>
+											</div>
+
+											<div className="bio-container default">
+												<table className="bio-table">
+													<tbody>
+													<tr>
+														<th style={{ width: '60%' }} className="two-column">
+															Location
+														</th>
+														<td style={{ width: '4%' }}></td>
+														<th style={{ width: '36%' }} className="two-column">
+															Experience
+														</th>
+													</tr>
+													<tr>
+														<td style={{ width: '60%' }}>{myDataFormatted.location}</td>
+														<td style={{ width: '4%' }}></td>
+														<td style={{ width: '36%' }}>
+															{myDataFormatted.yearsOfMusicExperience === 1
+																? `${myDataFormatted.yearsOfMusicExperience} year`
+																: `${myDataFormatted.yearsOfMusicExperience} years`}
+														</td>
+													</tr>
+													<tr>
+														<th className="one-column" colSpan={3}>
+															Genres
+														</th>
+													</tr>
+													<tr>
+														<td colSpan={3}>{myDataFormatted.preferredMusicGenres}</td>
+													</tr>
+													<tr>
+														<th className="one-column" colSpan={3}>
+															Methods
+														</th>
+													</tr>
+													<tr>
+														<td colSpan={3}>{myDataFormatted.preferredMethod}</td>
+													</tr>
+													<tr>
+														<th className="one-column" colSpan={3}>
+															Interests
+														</th>
+													</tr>
+													<tr>
+														<td colSpan={3}>{myDataFormatted.additionalInterests}</td>
+													</tr>
+													<tr>
+														<th className="one-column" colSpan={3}>
+															Personality
+														</th>
+													</tr>
+													<tr>
+														<td colSpan={3}>{myDataFormatted.personalityTraits}</td>
+													</tr>
+													<tr>
+														<th className="one-column" colSpan={3}>
+															Goals
+														</th>
+													</tr>
+													<tr>
+														<td colSpan={3}>{myDataFormatted.goalsWithMusic}</td>
+													</tr>
+													</tbody>
+												</table>
+											</div>
+
+											<div className="bio-container mobile">
+												<table className="bio-table">
+													<tbody>
+													<tr>
+														<th style={{ width: '48%' }} className="two-column">Location</th>
+														<td style={{ width: '4%' }}></td>
+														<th style={{ width: '48%' }} className="two-column">Experience</th>
+													</tr>
+													<tr>
+														<td style={{ width: '48%' }}>{myDataFormatted.location}</td>
+														<td style={{ width: '4%' }}></td>
+														<td style={{ width: '48%' }}>
+															{myDataFormatted.yearsOfMusicExperience === 1
+																? `${myDataFormatted.yearsOfMusicExperience} year`
+																: `${myDataFormatted.yearsOfMusicExperience} years`}
+														</td>
+													</tr>
+													<tr>
+														<th style={{ width: '48%' }} className="two-column">Genres</th>
+														<td style={{ width: '4%' }}></td>
+														<th style={{ width: '48%' }} className="two-column">Methods</th>
+													</tr>
+													<tr>
+														<td style={{ width: '48%' }}>{myDataFormatted.preferredMusicGenres}</td>
+														<td style={{ width: '4%' }}></td>
+														<td style={{ width: '48%' }}>{myDataFormatted.preferredMethod}</td>
+													</tr>
+													<tr>
+														<th style={{ width: '48%' }} className="two-column">Interests</th>
+														<td style={{ width: '4%' }}></td>
+														<th style={{ width: '48%' }} className="two-column">Personality</th>
+													</tr>
+													<tr>
+														<td style={{ width: '48%' }}>{myDataFormatted.additionalInterests}</td>
+														<td style={{ width: '4%' }}></td>
+														<td style={{ width: '48%' }}>{myDataFormatted.personalityTraits}</td>
+													</tr>
+													<tr>
+														<th colSpan={3}>Goals</th>
+													</tr>
+													<tr>
+														<td colSpan={3}>{myDataFormatted.goalsWithMusic}</td>
+													</tr>
+													</tbody>
+												</table>
 											</div>
 										</div>
 
-										<div className="bio-container default">
-											<table className="bio-table">
-												<tbody>
-												<tr>
-													<th style={{ width: '60%' }} className="two-column">
-														Location
-													</th>
-													<td style={{ width: '4%' }}></td>
-													<th style={{ width: '36%' }} className="two-column">
-														Experience
-													</th>
-												</tr>
-												<tr>
-													<td style={{ width: '60%' }}>{myDataFormatted.location}</td>
-													<td style={{ width: '4%' }}></td>
-													<td style={{ width: '36%' }}>
-														{myDataFormatted.yearsOfMusicExperience === 1
-															? `${myDataFormatted.yearsOfMusicExperience} year`
-															: `${myDataFormatted.yearsOfMusicExperience} years`}
-													</td>
-												</tr>
-												<tr>
-													<th className="one-column" colSpan={3}>
-														Genres
-													</th>
-												</tr>
-												<tr>
-													<td colSpan={3}>{myDataFormatted.preferredMusicGenres}</td>
-												</tr>
-												<tr>
-													<th className="one-column" colSpan={3}>
-														Methods
-													</th>
-												</tr>
-												<tr>
-													<td colSpan={3}>{myDataFormatted.preferredMethod}</td>
-												</tr>
-												<tr>
-													<th className="one-column" colSpan={3}>
-														Interests
-													</th>
-												</tr>
-												<tr>
-													<td colSpan={3}>{myDataFormatted.additionalInterests}</td>
-												</tr>
-												<tr>
-													<th className="one-column" colSpan={3}>
-														Personality
-													</th>
-												</tr>
-												<tr>
-													<td colSpan={3}>{myDataFormatted.personalityTraits}</td>
-												</tr>
-												<tr>
-													<th className="one-column" colSpan={3}>
-														Goals
-													</th>
-												</tr>
-												<tr>
-													<td colSpan={3}>{myDataFormatted.goalsWithMusic}</td>
-												</tr>
-												</tbody>
-											</table>
-										</div>
+										<div className="description-container">{myDataFormatted.description}</div>
 
-										<div className="bio-container mobile">
-											<table className="bio-table">
-												<tbody>
-												<tr>
-													<th style={{ width: '48%' }} className="two-column">Location</th>
-													<td style={{ width: '4%' }}></td>
-													<th style={{ width: '48%' }} className="two-column">Experience</th>
-												</tr>
-												<tr>
-													<td style={{ width: '48%' }}>{myDataFormatted.location}</td>
-													<td style={{ width: '4%' }}></td>
-													<td style={{ width: '48%' }}>
-														{myDataFormatted.yearsOfMusicExperience === 1
-															? `${myDataFormatted.yearsOfMusicExperience} year`
-															: `${myDataFormatted.yearsOfMusicExperience} years`}
-													</td>
-												</tr>
-												<tr>
-													<th style={{ width: '48%' }} className="two-column">Genres</th>
-													<td style={{ width: '4%' }}></td>
-													<th style={{ width: '48%' }} className="two-column">Methods</th>
-												</tr>
-												<tr>
-													<td style={{ width: '48%' }}>{myDataFormatted.preferredMusicGenres}</td>
-													<td style={{ width: '4%' }}></td>
-													<td style={{ width: '48%' }}>{myDataFormatted.preferredMethod}</td>
-												</tr>
-												<tr>
-													<th style={{ width: '48%' }} className="two-column">Interests</th>
-													<td style={{ width: '4%' }}></td>
-													<th style={{ width: '48%' }} className="two-column">Personality</th>
-												</tr>
-												<tr>
-													<td style={{ width: '48%' }}>{myDataFormatted.additionalInterests}</td>
-													<td style={{ width: '4%' }}></td>
-													<td style={{ width: '48%' }}>{myDataFormatted.personalityTraits}</td>
-												</tr>
-												<tr>
-													<th colSpan={3}>Goals</th>
-												</tr>
-												<tr>
-													<td colSpan={3}>{myDataFormatted.goalsWithMusic}</td>
-												</tr>
-												</tbody>
-											</table>
-										</div>
-									</div>
-
-									<div className="description-container">{myDataFormatted.description}</div>
-
-									<div className="name-container">
-										<span className="name">{username}</span>
-										<br />
-										<span>
+										<div className="name-container">
+											<span className="name">{username}</span>
+											<br />
+											<span>
 							{myDataFormatted.age}, {myDataFormatted.gender}
 						</span>
+										</div>
 									</div>
+
 								</div>
+
+
 							</div>
 
 							{/*<div className='user-stats-container'>*/}

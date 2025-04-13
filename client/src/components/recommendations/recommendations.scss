@@ -1,7 +1,7 @@
 @use '../../variables';
 
 .recommendations-container {
-  position: relative;
+  //position: relative;
   //height: calc(100vh - 64px);
   @include variables.whole-page;
   @include variables.centered-column;
@@ -10,6 +10,10 @@
   .description-container {
 	@media (min-width: 768px) {
 	  margin-top: 3rem;
+	}
+	@media (max-width: 440px) {
+	  font-size: 0.8rem;
+	  display: none;
 	}
   }
 
@@ -39,25 +43,30 @@
 	}
   }
 
-  .profile-card-container {
+  .extra-profile-card-container {
 	margin-top: 4rem;
 	justify-content: flex-start;
 
-	@media (max-width: 768px) {
-	  margin-top: 1rem;
-	  justify-content: center;
-	}
+	.profile-card-container {
 
-	.picture-bio-container {
-	  @media (min-width: 768px) {
-	  	margin-top: 4rem;
+
+	  @media (max-width: 768px) {
+		margin-top: 1rem;
 		justify-content: center;
-		max-height: 50%;
 	  }
-	}
 
-	.name-container {
-	  padding-bottom: 1rem;
+	  .picture-bio-container {
+		@media (min-width: 768px) {
+		  margin-top: 3rem;
+		  justify-content: center;
+		  max-height: 50%;
+		}
+	  }
+
+	  .name-container {
+		margin-bottom: 2rem;
+		margin-top: auto;
+	  }
 	}
   }
 
@@ -69,7 +78,7 @@
 	background-color: rgba(255, 255, 255, 0.9);
 	box-shadow: variables.$default-button-shadow;
 	position: absolute;
-	bottom: 4.25rem;
+	bottom: 0;
 	left: 50%;
 	transform: translateX(-50%);
 	display: flex;
@@ -77,18 +86,6 @@
 	justify-content: space-between;
 	align-items: center;
 	transition: all 0.1s ease-in-out;
-
-	@media (max-width: 1200px) {
-	  bottom: 2rem;
-	}
-
-	@media (max-width: 768px) {
-	  bottom: 0.5rem !important;
-	}
-
-	@media (max-width: 1200px) {
-	  bottom: 2rem;
-	}
 
 	&:has(.swiping) {
 	  padding: 0;
@@ -111,8 +108,8 @@
 	  justify-content: flex-end;
 	}
 
-	@media (max-width: 600px) {
-	  bottom: 2rem;
+	@media (max-width: 768px) {
+	  bottom: -0.5rem;
 	}
 
 	.like-button, .dislike-button {
@@ -126,10 +123,8 @@
 	  margin: 0.75rem;
 	  padding: 0;
 	  transition: all 0.2s ease-in;
-	  //&[data-swipe-progress] {
-	  //  width: calc(4rem + (var(--swipe-progress) * 100px));
-	  //  height: calc(4rem - 2px);
-	  //}
+	  cursor: pointer;
+
 	  &.hidden {
 		display: none;
 	  }
