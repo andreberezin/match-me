@@ -8,9 +8,7 @@
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "start": "cross-env VITE_BACKEND_URL=http://localhost:8080 concurrently \"npm run dev\" \"cd .. && mvn spring-boot:run\"",
-    "renderStart": "cross-env FRONTEND_URL=https://match-me-frontend.onrender.com BACKEND_URL=https://match-me-backend-latest.onrender.com concurrently \"npm run dev\" \"cd .. && mvn spring-boot:run\"",
-    "dockerStart": ""
+    "start": "cross-env VITE_BACKEND_URL=http://192.168.3.50:8080 concurrently \"npm run dev\" \"cd .. && mvn spring-boot:run\""
   },
   "dependencies": {
     "@cloudinary/react": "^1.13.1",
