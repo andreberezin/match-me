@@ -79,8 +79,6 @@ function Recommendations() {
 					maxMatchRadius: response.data.payload.maxMatchRadius
 				});
 
-				console.log("Max match radius: ", response.data.payload.maxMatchRadius)
-
 			} catch (error) {
 				setError(true);
 				setErrorMessage(error.message);

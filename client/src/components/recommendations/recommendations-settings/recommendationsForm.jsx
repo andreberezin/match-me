@@ -41,7 +41,6 @@ export function RecommendationsForm({preferencesData, setPreferencesData, setLoa
 
 	// on submit send data to backend
 	const Submit = async (formattedData) => {
-		console.log("Sending:", JSON.stringify(formattedData, null, 2));
 		try {
 			await axios.patch(`${VITE_BACKEND_URL}/api/me/bio`, formattedData, {
 					headers: {
@@ -77,8 +76,6 @@ export function RecommendationsForm({preferencesData, setPreferencesData, setLoa
 		const locationData = {
 			maxMatchRadius: maxMatchRadius
 		};
-
-		console.log('Sending:', JSON.stringify(maxMatchRadius, null, 2));
 
 		try {
 			await axios.post(`${VITE_BACKEND_URL}/api/me/location`, locationData, {
