@@ -82,7 +82,7 @@ export const customStyles = {
 		lineHeight: '2rem'
 	}),
 
-	singleValue: (provided, state) => ({
+	singleValue: (provided) => ({
 		...provided,
 		textAlign: 'left',
 		width: '100%'
@@ -184,6 +184,4 @@ export const customStyles = {
 		borderRadius: '8px',
 		height: '19px'
 	})
-
-
 };

@@ -1,6 +1,6 @@
 import './nav-bar-user.scss';
 import {NavLink, useNavigate} from 'react-router-dom';
-import React, {useEffect, useState} from 'react';
+import {useCallback, useEffect, useState} from 'react';
 import {useAuth} from '../utils/AuthContext.jsx';
 
 // mobile icons
@@ -26,7 +26,7 @@ function NavigatorUser() {
 
 	// fetch the amount of pending requests to display for user
 	// todo make into socket connection to get live updates
-	const getPendingRequests = async () => {
+	const getPendingRequests = useCallback(async () => {
 
 		// console.log('Getting pending requests length');
 
@@ -53,11 +53,11 @@ function NavigatorUser() {
 				// todo display error to user
 			}
 		}
-	};
+	}, [VITE_BACKEND_URL, tokenValue]);
 
 	useEffect(() => {
-		getPendingRequests();
-	}, []);
+		getPendingRequests().catch(error => console.error('Unhandled error at getPendingRequests: ', error));
+	}, [getPendingRequests]);
 
 	return (
 		<>

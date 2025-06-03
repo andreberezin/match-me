@@ -17,7 +17,7 @@ import Recommendations from './components/recommendations/recommendations.jsx';
 import Settings from './components/settings/settings.jsx';
 import {AuthProvider} from './components/utils/AuthContext.jsx';
 
-
+// eslint-disable-next-line
 function Main() {
 	const router = createBrowserRouter([
 		{

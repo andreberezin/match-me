@@ -1,7 +1,7 @@
 import './chats.scss';
 import Chat from './Chat';
 import {useAuth} from '../utils/AuthContext.jsx';
-import React, {useEffect, useState} from 'react';
+import {useCallback, useEffect, useState} from 'react';
 import axios from 'axios';
 import {FaBell} from 'react-icons/fa';
 
@@ -16,20 +16,79 @@ function Chats() {
 	const [error, setError] = useState(false);
 	const [errorMessage, setErrorMessage] = useState('');
 	const [userStatuses, setUserStatuses] = useState({});
-	const [username, setUsername] = useState('');
 	const [unreadMessages, setUnreadMessages] = useState({});
 	const [totalUnreadCount, setTotalUnreadCount] = useState(0);
 	const [notifications, setNotifications] = useState([]);
 
+	// Fetch unread messages count
+	const fetchUnreadCount = useCallback(async () => {
+		try {
+			const response = await axios.get(`${VITE_BACKEND_URL}/api/chat/unread-count`, {
+				headers: {Authorization: `Bearer ${tokenValue}`}
+			});
+			setTotalUnreadCount(response.data.payload.count);
+		} catch (error) {
+			console.error('Error fetching unread count:', error);
+		}
+	}, [VITE_BACKEND_URL, tokenValue]);
+
+	// Fetch notifications (details about unread messages)
+	const fetchNotifications = useCallback(async () => {
+		try {
+			const response = await axios.get(`${VITE_BACKEND_URL}/api/chat/notifications`, {
+				headers: {Authorization: `Bearer ${tokenValue}`}
+			});
+			setNotifications(response.data.payload);
+
+			// Also update unread counts per sender
+			const unreadCounts = {};
+			response.data.payload.forEach(notification => {
+				unreadCounts[notification.senderId] = notification.count;
+			});
+			setUnreadMessages(unreadCounts);
+
+			// Recalculate total count
+			let total = 0;
+			Object.values(unreadCounts).forEach(count => {
+				total += count;
+			});
+			setTotalUnreadCount(total);
+		} catch (error) {
+			console.error('Error fetching notifications:', error);
+		}
+	}, [VITE_BACKEND_URL, tokenValue]);
+
+	// Helper function to mark messages as read
+	const markMessagesAsRead = useCallback(async (senderId) => {
+		if (!senderId) return;
+
+		try {
+			await axios.post(`${VITE_BACKEND_URL}/api/chat/mark-as-read/${senderId}`, {}, {
+				headers: {Authorization: `Bearer ${tokenValue}`}
+			});
+
+			// Update local state to show messages as read
+			setUnreadMessages(prev => ({
+				...prev,
+				[senderId]: 0
+			}));
+
+			// Refresh notifications and unread count
+			await fetchNotifications();
+			await fetchUnreadCount();
+		} catch (error) {
+			console.error('Error marking messages as read:', error);
+		}
+	}, [VITE_BACKEND_URL, fetchNotifications, fetchUnreadCount, tokenValue]);
+
 	// Fetch user info and subscribe to status updates
 	useEffect(() => {
 		if (tokenValue && webSocketClient) {
-			const fetchUsername = async () => {
+			(async () => {
 				try {
 					const response = await axios.get(`${VITE_BACKEND_URL}/api/me`, {
 						headers: {Authorization: `Bearer ${tokenValue}`}
 					});
-					setUsername(response.data.payload.username);
 
 					// Set up subscription for status updates
 					if (webSocketClient && webSocketClient.connected) {
@@ -71,71 +130,9 @@ function Chats() {
 				} catch (error) {
 					console.error(error.message);
 				}
-			};
-			fetchUsername();
+			})();
 		}
-	}, [tokenValue, webSocketClient, selectedUserId]);
-
-	// Fetch unread messages count
-	const fetchUnreadCount = async () => {
-		try {
-			const response = await axios.get(`${VITE_BACKEND_URL}/api/chat/unread-count`, {
-				headers: {Authorization: `Bearer ${tokenValue}`}
-			});
-			setTotalUnreadCount(response.data.payload.count);
-		} catch (error) {
-			console.error('Error fetching unread count:', error);
-		}
-	};
-
-	// Fetch notifications (details about unread messages)
-	const fetchNotifications = async () => {
-		try {
-			const response = await axios.get(`${VITE_BACKEND_URL}/api/chat/notifications`, {
-				headers: {Authorization: `Bearer ${tokenValue}`}
-			});
-			setNotifications(response.data.payload);
-
-			// Also update unread counts per sender
-			const unreadCounts = {};
-			response.data.payload.forEach(notification => {
-				unreadCounts[notification.senderId] = notification.count;
-			});
-			setUnreadMessages(unreadCounts);
-
-			// Recalculate total count
-			let total = 0;
-			Object.values(unreadCounts).forEach(count => {
-				total += count;
-			});
-			setTotalUnreadCount(total);
-		} catch (error) {
-			console.error('Error fetching notifications:', error);
-		}
-	};
-
-	// Helper function to mark messages as read
-	const markMessagesAsRead = async (senderId) => {
-		if (!senderId) return;
-
-		try {
-			await axios.post(`${VITE_BACKEND_URL}/api/chat/mark-as-read/${senderId}`, {}, {
-				headers: {Authorization: `Bearer ${tokenValue}`}
-			});
-
-			// Update local state to show messages as read
-			setUnreadMessages(prev => ({
-				...prev,
-				[senderId]: 0
-			}));
-
-			// Refresh notifications and unread count
-			fetchNotifications();
-			fetchUnreadCount();
-		} catch (error) {
-			console.error('Error marking messages as read:', error);
-		}
-	};
+	}, [tokenValue, webSocketClient, selectedUserId, VITE_BACKEND_URL, fetchUnreadCount, fetchNotifications, markMessagesAsRead]);
 
 	// fetch all connections by ids
 	useEffect(() => {
@@ -181,8 +178,8 @@ function Chats() {
 				}
 
 				// Fetch unread messages and notifications
-				fetchUnreadCount();
-				fetchNotifications();
+				await fetchUnreadCount();
+				await fetchNotifications();
 
 			} catch (error) {
 				setError(true);
@@ -194,14 +191,14 @@ function Chats() {
 		};
 
 		if (tokenValue) {
-			fetchConnections();
+			fetchConnections().catch(error => console.error('Unhandled error at fetchConnections: ', error));
 
 			// Also, send our ACTIVE status to all connections when the chat page loads
 			if (webSocketClient && webSocketClient.connected && userId) {
 				broadcastStatus(webSocketClient, userId, 'ACTIVE', tokenValue);
 			}
 		}
-	}, [tokenValue, userId, webSocketClient]);
+	}, [VITE_BACKEND_URL, broadcastStatus, fetchNotifications, fetchUnreadCount, fetchWithToken, tokenValue, userId, webSocketClient]);
 
 	// Request status updates periodically
 	useEffect(() => {
@@ -228,7 +225,7 @@ function Chats() {
 		}, 30000); // Every 30 seconds
 
 		return () => clearInterval(statusRefreshInterval);
-	}, [webSocketClient, connections, userId, tokenValue]);
+	}, [webSocketClient, connections, userId, tokenValue, broadcastStatus]);
 
 	// Broadcast our status to all connections
 	const handleButtonClick = (userId, username) => {
@@ -280,7 +277,7 @@ function Chats() {
 		});
 
 		// Call API to mark messages as read
-		markMessagesAsRead(userId);
+		markMessagesAsRead(userId).catch(error => console.error('Unhandled error at markMessagesAsRead: ', error));
 
 		setSelectedUser(username);
 		setSelectedUserId(userId);
@@ -346,7 +343,7 @@ function Chats() {
 		}));
 
 		// Update total count
-		fetchUnreadCount();
+		fetchUnreadCount().catch(error => console.error('Unhandled error at fetchUnreadCount: ', error));
 	};
 
 	return (

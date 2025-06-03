@@ -1,6 +1,6 @@
 import './connections.scss';
 import '../reusables/profile-card.scss';
-import React, {useCallback, useEffect, useRef, useState} from 'react';
+import {useCallback, useEffect, useRef, useState} from 'react';
 import axios from 'axios';
 import {useAuth} from '../utils/AuthContext.jsx';
 import {closeSettings, formatData, formatLocation, openSettings} from '../reusables/profile-card-functions.jsx';
@@ -12,8 +12,10 @@ import {FaSpotify} from 'react-icons/fa';
 
 function Connections() {
 	const [loading, setLoading] = useState(true);
+	// eslint-disable-next-line no-unused-vars
 	const [currentConnectionIds, setCurrentConnectionIds] = useState([]);
 	const [currentConnections, setCurrentConnections] = useState([]);
+	// eslint-disable-next-line no-unused-vars
 	const [pendingConnectionIds, setPendingConnectionIds] = useState([]);
 	const [pendingConnections, setPendingConnections] = useState([]);
 	const [isDeleting, setIsDeleting] = useState(false);
@@ -46,76 +48,8 @@ function Connections() {
 		});
 	}, []);
 
-
-	// fetch connection ids
-	const getConnectionIds = async () => {
-		const controller = new AbortController(); // Create an abort controller
-		const signal = controller.signal;
-
-		try {
-			const [currentConnectionsResponse, pendingConnectionsResponse] = await Promise.all([
-				fetchWithToken(`/api/connections`, {
-					/*headers: {
-						'Authorization': `Bearer ${tokenValue}`,
-						'Content-Type': 'application/json'
-					}*/
-					signal
-				}, false),
-				fetchWithToken(`/api/pendingRequests`, {
-					signal
-				}, false)
-			]);
-
-			const currentIds = currentConnectionsResponse.data.payload || [];
-			const pendingIds = pendingConnectionsResponse.data.payload || [];
-
-			await getConnectionsData(currentIds, setCurrentConnections, setCurrentDataFetched);
-			await getConnectionsData(pendingIds, setPendingConnections, setPendingDataFetched);
-
-		} catch (error) {
-			setError(true);
-			setErrorMessage(error.message);
-			if (axios.isCancel(error)) {
-				console.log('Fetch aborted');
-			} else {
-				console.error('Error getting connections: ', (error.message));
-				// todo display error to user
-			}
-		}
-	};
-
-	// format received data
-	const formatDataForView = (data) => {
-		if (data !== null && data && isDataFormatted.current === false) {
-			const updatedProfile = {
-				...data,
-				location: formatLocation(data.location),
-				// location: myDataFormatted.location,
-				preferredMusicGenres: Array.isArray(data.preferredMusicGenres)
-					? formatData(data.preferredMusicGenres)
-					: data.preferredMusicGenres,
-				preferredMethod: Array.isArray(data.preferredMethod)
-					? formatData(data.preferredMethod)
-					: data.preferredMethod,
-				additionalInterests: Array.isArray(data.additionalInterests)
-					? formatData(data.additionalInterests)
-					: data.additionalInterests,
-				personalityTraits: Array.isArray(data.personalityTraits)
-					? formatData(data.personalityTraits)
-					: data.personalityTraits,
-				goalsWithMusic: Array.isArray(data.goalsWithMusic)
-					? formatData(data.goalsWithMusic)
-					: data.goalsWithMusic
-			};
-			return updatedProfile;
-		}
-		return data;
-	};
-
 	// fetch data based on ids
-	const getConnectionsData = async (ids, setState, setFetchedState) => {
-		const controller = new AbortController(); // Create an abort controller
-		const signal = controller.signal;
+	const getConnectionsData = useCallback(async (ids, setState, setFetchedState) => {
 
 		if (isDeleting === false) {
 			try {
@@ -169,6 +103,71 @@ function Connections() {
 				}
 			}
 		}
+	}, [fetchWithToken, isDeleting]);
+
+
+	// fetch connection ids
+	const getConnectionIds = useCallback(async () => {
+		const controller = new AbortController(); // Create an abort controller
+		const signal = controller.signal;
+
+		try {
+			const [currentConnectionsResponse, pendingConnectionsResponse] = await Promise.all([
+				fetchWithToken(`/api/connections`, {
+					/*headers: {
+						'Authorization': `Bearer ${tokenValue}`,
+						'Content-Type': 'application/json'
+					}*/
+					signal
+				}, false),
+				fetchWithToken(`/api/pendingRequests`, {
+					signal
+				}, false)
+			]);
+
+			const currentIds = currentConnectionsResponse.data.payload || [];
+			const pendingIds = pendingConnectionsResponse.data.payload || [];
+
+			await getConnectionsData(currentIds, setCurrentConnections, setCurrentDataFetched);
+			await getConnectionsData(pendingIds, setPendingConnections, setPendingDataFetched);
+
+		} catch (error) {
+			setError(true);
+			setErrorMessage(error.message);
+			if (axios.isCancel(error)) {
+				console.log('Fetch aborted');
+			} else {
+				console.error('Error getting connections: ', (error.message));
+				// todo display error to user
+			}
+		}
+	}, [fetchWithToken, getConnectionsData]);
+
+	// format received data
+	const formatDataForView = (data) => {
+		if (data !== null && data && isDataFormatted.current === false) {
+			return {
+				...data,
+				location: formatLocation(data.location),
+				// location: myDataFormatted.location,
+				preferredMusicGenres: Array.isArray(data.preferredMusicGenres)
+					? formatData(data.preferredMusicGenres)
+					: data.preferredMusicGenres,
+				preferredMethod: Array.isArray(data.preferredMethod)
+					? formatData(data.preferredMethod)
+					: data.preferredMethod,
+				additionalInterests: Array.isArray(data.additionalInterests)
+					? formatData(data.additionalInterests)
+					: data.additionalInterests,
+				personalityTraits: Array.isArray(data.personalityTraits)
+					? formatData(data.personalityTraits)
+					: data.personalityTraits,
+				goalsWithMusic: Array.isArray(data.goalsWithMusic)
+					? formatData(data.goalsWithMusic)
+					: data.goalsWithMusic
+			};
+		}
+		return data;
 	};
 
 	// display connections
@@ -235,8 +234,8 @@ function Connections() {
 
 	// fetch current and pending connection ids
 	useEffect(() => {
-		getConnectionIds();
-	}, []);
+		getConnectionIds().catch(error => console.error('Unhandled error at getConnectionIds: ', error));
+	}, [getConnectionIds]);
 
 	// change loading state when all data is fetched
 	useEffect(() => {
@@ -255,7 +254,7 @@ function Connections() {
 	};
 
 	// Handle the accept button click
-	const acceptDelete = (setState, setIdState) => {
+	const acceptDelete = async(setState, setIdState) => {
 		setIsDeleting(true);
 
 		let endpoint = '';
@@ -281,7 +280,7 @@ function Connections() {
 			setState((prevConnections) => prevConnections.filter((connection) => connection.id !== toDeleteId.current));
 			setIdState((prevIds) => prevIds.filter((id) => id !== toDeleteId.current));
 			//Remove the connection from the state
-			axios.delete(`${VITE_BACKEND_URL}/api/${endpoint}`, {
+			await axios.delete(`${VITE_BACKEND_URL}/api/${endpoint}`, {
 				headers: {
 					'Authorization': `Bearer ${tokenValue}`,
 					'Content-Type': 'application/json'
@@ -307,11 +306,11 @@ function Connections() {
 	};
 
 	// accept pending request
-	const acceptRequest = (requestId) => {
+	const acceptRequest = async(requestId) => {
 
 		// add to connections
 		try {
-			axios.post(`${VITE_BACKEND_URL}/api/addConnection`, {
+			await axios.post(`${VITE_BACKEND_URL}/api/addConnection`, {
 				matchId: requestId
 			}, {
 				headers: {
@@ -334,7 +333,7 @@ function Connections() {
 		setIsDeleting(true);
 
 		try {
-			axios.delete(`${VITE_BACKEND_URL}/api/deletePendingRequest`, {
+			await axios.delete(`${VITE_BACKEND_URL}/api/deletePendingRequest`, {
 				headers: {
 					'Authorization': `Bearer ${tokenValue}`,
 					'Content-Type': 'application/json'
@@ -359,8 +358,7 @@ function Connections() {
 
 	// get id of parent element
 	const getIdOfParent = (event) => {
-		const id = Number(event.currentTarget.parentNode.id);
-		return id;
+		return Number(event.currentTarget.parentNode.id);
 	};
 
 
@@ -560,13 +558,13 @@ function Connections() {
 							<div className='modal-buttons'>
 								{pendingOrCurrent === 'current' ? (
 									<button id='acceptButton' onClick={() => {
-										acceptDelete(setCurrentConnections, setCurrentConnectionIds);
+										acceptDelete(setCurrentConnections, setCurrentConnectionIds).catch(error => console.error('Unhandled error at acceptDelete: ', error));
 									}}>
 										<span>Yes</span>
 									</button>
 								) : (
 									<button id='acceptButton' onClick={() => {
-										acceptDelete(setPendingConnections, setPendingConnectionIds);
+										acceptDelete(setPendingConnections, setPendingConnectionIds).catch(error => console.error('Unhandled error at acceptDelete: ', error));
 									}}>
 										<span>Yes</span>
 									</button>
@@ -593,13 +591,13 @@ function Connections() {
 
 							<div className='current-pending-buttons-container'>
 
-								<button className='current active' onClick={() => {
+								<button className='current active' onClick={(event) => {
 									toggleButton(event);
 									setPendingOrCurrent('current');
 								}}>Current connections
 								</button>
 
-								<button className='pending' onClick={() => {
+								<button className='pending' onClick={(event) => {
 									toggleButton(event);
 									setPendingOrCurrent('pending');
 								}}>Pending connections

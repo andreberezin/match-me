@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react';
+import {useCallback, useEffect, useRef, useState} from 'react';
 import './chats.scss';
 import {Client} from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
@@ -23,10 +23,10 @@ const Chat = ({receiverUsername, receiverUserId, onMessagesRead}) => {
 	const [username, setUsername] = useState('');
 	const [beforeId, setBeforeId] = useState(0);
 	const [hasMore, setHasMore] = useState(true);
-	const scrollRef = useRef();
+	const scrollRef = useRef(null);
 
 	// Fetch chat history
-	const fetchChatHistory = async (isInitial = false) => {
+	const fetchChatHistory = useCallback(async (isInitial = false) => {
 		if (!receiverUserId || !userId) return;
 
 		try {
@@ -53,10 +53,10 @@ const Chat = ({receiverUsername, receiverUserId, onMessagesRead}) => {
 		} catch (error) {
 			console.error('Error fetching chat history:', error);
 		}
-	};
+	}, [VITE_BACKEND_URL, beforeId, receiverUserId, tokenValue, userId]);
 
 	// Mark messages as read
-	const markMessagesAsRead = async () => {
+	const markMessagesAsRead = useCallback(async () => {
 		if (!receiverUserId) return;
 
 		try {
@@ -71,7 +71,7 @@ const Chat = ({receiverUsername, receiverUserId, onMessagesRead}) => {
 		} catch (error) {
 			console.error('Error marking messages as read:', error);
 		}
-	};
+	}, [VITE_BACKEND_URL, onMessagesRead, receiverUserId, tokenValue]);
 
 	// Handle typing indicator
 	const handleTyping = () => {
@@ -119,35 +119,36 @@ const Chat = ({receiverUsername, receiverUserId, onMessagesRead}) => {
 		setBeforeId(0);
 		setHasMore(true);
 		if (receiverUserId && userId) {
-			fetchChatHistory(true);
-			markMessagesAsRead();
+			fetchChatHistory(true).catch(error => console.error('Unhandled error in fetchChatHistory: ', error));
+			markMessagesAsRead().catch(error => console.error('Unhandled error in markMessagesAsRead: ', error));
 		}
-	}, [receiverUserId, userId]);
+	}, [fetchChatHistory, markMessagesAsRead, receiverUserId, userId]);
 
 	// Call markMessagesAsRead every time the receiverUserId changes (chat switched)
 	useEffect(() => {
 		if (receiverUserId) {
-			markMessagesAsRead();
+			markMessagesAsRead().catch(error => console.error('Unhandled error in markMessagesAsRead: ', error));
 		}
-	}, [receiverUserId]);
+	}, [receiverUserId, fetchChatHistory, markMessagesAsRead]);
 
 	// handle scroll behavior in chat to fetch more of chat history when scrolling up
 	const handleScroll = () => {
-		if (!scrollRef.current) return;
+		const element = scrollRef.current
+		if (!element) return;
 
-		const top = Math.floor(scrollRef.current.scrollTop);
-		const height = Math.floor(scrollRef.current.scrollHeight);
-		const elementHeight = Math.floor(scrollRef.current.clientHeight);
+		const top = Math.floor(element.scrollTop);
+		const height = Math.floor(element.scrollHeight);
+		const elementHeight = Math.floor(element.clientHeight);
 
 		if (top + height > elementHeight - 100 && hasMore) {
-			fetchChatHistory();
+			fetchChatHistory().catch(error => console.error('Unhandled error in fetchChatHistory: ', error));
 		}
 	};
 
 	// Fetch user info
 	useEffect(() => {
 		if (isUserLoggedIn && tokenValue) {
-			const fetchUsername = async () => {
+			(async () => {
 				try {
 					const response = await axios.get(`${VITE_BACKEND_URL}/api/me`,
 						{
@@ -160,10 +161,9 @@ const Chat = ({receiverUsername, receiverUserId, onMessagesRead}) => {
 				} catch (error) {
 					console.log(error.message);
 				}
-			};
-			fetchUsername();
+			})();
 		}
-	}, [isUserLoggedIn, tokenValue]);
+	}, [isUserLoggedIn, tokenValue, VITE_BACKEND_URL]);
 
 	// Set up WebSocket connection
 	useEffect(() => {
@@ -182,7 +182,7 @@ const Chat = ({receiverUsername, receiverUserId, onMessagesRead}) => {
 			onConnect: () => {
 				console.log('Connected to WebSocket');
 
-				// subscribe to private messages for the logged in user
+				// subscribe to private messages for the logged-in user
 				stompClient.subscribe(`/user/${normalizedUsername}/queue/messages`, (msg) => {
 					const newMsg = JSON.parse(msg.body);
 					setMessages((prev) => {
@@ -192,7 +192,7 @@ const Chat = ({receiverUsername, receiverUserId, onMessagesRead}) => {
 
 					// If this is from the currently active chat, mark it as read
 					if (newMsg.senderId === receiverUserId || newMsg.senderUsername === receiverUsername) {
-						markMessagesAsRead();
+						markMessagesAsRead().catch(error => console.error('Unhandled error in markMessagesAsRead: ', error));
 					}
 				});
 
@@ -230,7 +230,7 @@ const Chat = ({receiverUsername, receiverUserId, onMessagesRead}) => {
 					});
 
 					// Mark messages from this sender as read when opening the chat
-					markMessagesAsRead();
+					markMessagesAsRead().catch(error => console.error('Unhandled error in markMessagesAsRead: ', error));
 				}
 			}
 		});
@@ -252,9 +252,9 @@ const Chat = ({receiverUsername, receiverUserId, onMessagesRead}) => {
 					})
 				});
 			}
-			stompClient.deactivate();
+			stompClient.deactivate().catch(error => console.error('Unhandled error in stompClient.deactivate: ', error));
 		};
-	}, [username, receiverUserId]);
+	}, [username, receiverUserId, tokenValue, receiverUsername, markMessagesAsRead]);
 
 	// send message in chat
 	const sendMessage = () => {
@@ -313,7 +313,7 @@ const Chat = ({receiverUsername, receiverUserId, onMessagesRead}) => {
 				});
 
 				// Also mark messages as read when tab becomes visible again
-				markMessagesAsRead();
+				markMessagesAsRead().catch(error => console.error('Unhandled error in markMessagesAsRead: ', error));
 			}
 			// REMOVED: We don't set status to INACTIVE when tab is not visible
 		};
@@ -323,7 +323,7 @@ const Chat = ({receiverUsername, receiverUserId, onMessagesRead}) => {
 		return () => {
 			document.removeEventListener('visibilitychange', handleVisibilityChange);
 		};
-	}, [client, receiverUserId, tokenValue]);
+	}, [client, markMessagesAsRead, receiverUserId, tokenValue]);
 
 	// handle key presses in chat so when user is focused on the chat window they can focus the message input field with "Tab" key
 	const handleKeyPresses = (event) => {
@@ -369,8 +369,7 @@ const Chat = ({receiverUsername, receiverUserId, onMessagesRead}) => {
 	const formatTimestamp = (timestamp) => {
 		const trimmed = timestamp.slice(0, 23);
 		const date = new Date(trimmed);
-		const readable = date.toLocaleString();
-		return readable;
+		return date.toLocaleString();
 	};
 
 	// handle message input change - trigger typing indicator

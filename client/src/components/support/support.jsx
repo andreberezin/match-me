@@ -39,7 +39,7 @@ function Support() {
 						noValidate={true}
 						onSubmit={handleSubmit}>
 						<label id={'support'}>
-							What's on your mind?
+							What&#39;s on your mind?
 							<textarea
 								maxLength={300}
 								id='support'

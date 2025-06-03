@@ -1,5 +1,6 @@
 import * as yup from 'yup';
 
+// eslint-disable-next-line no-unused-vars
 export const stepOneSchema = (formOneData) =>
 	yup.object().shape({
 		firstName: yup.string()
@@ -38,6 +39,7 @@ export const stepOneSchema = (formOneData) =>
 		terms: yup.boolean().oneOf([true], 'You must accept the terms and conditions')
 	});
 
+// eslint-disable-next-line no-unused-vars
 export const stepTwoSchema = (formThreeData) =>
 	yup.object().shape({
 		preferredMethods:
@@ -136,6 +138,7 @@ export const stepThreeSchema = (formOneData) =>
 			.notRequired()
 	});
 
+// eslint-disable-next-line no-unused-vars
 export const stepFiveSchema = (formFiveData) =>
 	yup.object().shape({
 		matchPreferredMethods:

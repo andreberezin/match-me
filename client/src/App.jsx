@@ -17,21 +17,20 @@ function App() {
 
 	// wake up backend when frontend is rendered
 	useEffect(() => {
-		const wakeUpBackend = async () => {
+		(async () => {
 			try {
-				const response = await axios.post(`${VITE_BACKEND_URL}/api/hello-backend`, {
+				await axios.post(`${VITE_BACKEND_URL}/api/hello-backend`, {
 					message: 'Hello from backend'
 				});
 			} catch (error) {
 				console.error('Failed to wake up backend: ' + error.message);
 			}
-		};
-		wakeUpBackend();
-	}, []);
+		})();
+	});
 
 	// load google API script
 	useEffect(() => {
-		loadGoogleMapsScript();
+		loadGoogleMapsScript().catch(error => console.error('Unhandled error at loadGoogleMapsScript: ', error));
 	}, []);
 
 	const isRegister = location.pathname === '/register';

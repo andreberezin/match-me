@@ -34,9 +34,9 @@ const uploadToCloudinary = async (file) => {
 		});
 
 		if (!response.ok) {
-			throw new Error('Cloudinary upload failed');
+			console.error('Cloudinary upload failed');
 		}
-
+		
 		const data = await response.json();
 		return data.secure_url; // this is the cloudinary image url
 	} catch (error) {

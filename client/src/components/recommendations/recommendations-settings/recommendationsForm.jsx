@@ -14,9 +14,8 @@ import {yupResolver} from '@hookform/resolvers/yup';
 import {recommendationsFormValidationSchema} from './recommendationsFormValidationSchema.jsx';
 import {ErrorElement} from '../../reusables/errorElement.jsx';
 import {useAuth} from '../../utils/AuthContext.jsx';
-import React, {useEffect, useState} from 'react';
 import axios from 'axios';
-import {handleCloseMenu} from '../../register/register.jsx';
+import {handleCloseMenu} from '../../reusables/handleCloseMenu.jsx';
 import {closeSettings} from '../../reusables/profile-card-functions.jsx';
 import './distanceSlider.scss'
 
@@ -42,7 +41,6 @@ export function RecommendationsForm({preferencesData, setPreferencesData, setLoa
 
 	// on submit send data to backend
 	const Submit = async (formattedData) => {
-		console.log("Sending:", JSON.stringify(formattedData, null, 2));
 		try {
 			await axios.patch(`${VITE_BACKEND_URL}/api/me/bio`, formattedData, {
 					headers: {
@@ -79,11 +77,8 @@ export function RecommendationsForm({preferencesData, setPreferencesData, setLoa
 			maxMatchRadius: maxMatchRadius
 		};
 
-		console.log('Sending:', JSON.stringify(maxMatchRadius, null, 2));
-
 		try {
-			const response = await
-				axios.post(`${VITE_BACKEND_URL}/api/me/location`, locationData, {
+			await axios.post(`${VITE_BACKEND_URL}/api/me/location`, locationData, {
 					headers: {
 						Authorization: `Bearer ${tokenValue}`,
 						'Content-Type': 'application/json'

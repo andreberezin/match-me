@@ -1,7 +1,6 @@
 import './stats.scss'
 import {closeSettings} from '../../reusables/profile-card-functions.jsx';
 import {IoClose} from 'react-icons/io5';
-import React from 'react';
 
 // stats page of /dashboard settings
 export function Stats () {

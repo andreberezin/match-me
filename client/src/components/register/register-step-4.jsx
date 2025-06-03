@@ -2,7 +2,7 @@
 import {AdvancedImage} from '@cloudinary/react';
 import {getOptimizedImage} from '../utils/cloudinary.jsx';
 import {PreviousNextButtons} from '../reusables/previousNextButtons.jsx';
-import React, {useState} from 'react';
+import {useState} from 'react';
 
 function Step4({stepFunctions, image, imageUrl, onImageChange}) {
 	const [loadingImage, setLoadingImage] = useState(false);

@@ -19,7 +19,7 @@ export const formatLocation = (data) => {
 };
 
 // open settings popup
-export const openSettings = (event) => {
+export const openSettings = () => {
 	const settingsPopup = document.getElementById('settings-popup');
 	settingsPopup.style.display = 'flex';
 };
@@ -71,7 +71,7 @@ export const sendPictureToBackend = async (publicId, tokenValue) => {
 };
 
 // close settings popup
-export const closeSettings = (event) => {
+export const closeSettings = () => {
 	const settingsPopup = document.getElementById('settings-popup');
 	settingsPopup.style.display = 'none';
 };
@@ -79,6 +79,5 @@ export const closeSettings = (event) => {
 // format string to object
 export const backToObject = (array, options) => {
 	const formattedArray = array.map(item => item.replaceAll(',', '').trim());
-	const arrayOfObjects = formattedArray.map(item => options.find(option => option.value === item)).filter(Boolean);
-	return arrayOfObjects;
+	return formattedArray.map(item => options.find(option => option.value === item)).filter(Boolean);
 };

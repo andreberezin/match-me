@@ -6,7 +6,7 @@ export function useSwipe() {
 	const touchEndX = useRef(null);
 	const [swipeProgress, setSwipeProgress] = useState(0);
 
-	function handleTouchStart(like, dislike) {
+	function handleTouchStart(event) {
 		touchStartX.current = event.touches[0].clientX;
 		touchEndX.current = null; // Reset
 		setSwipeProgress(0);

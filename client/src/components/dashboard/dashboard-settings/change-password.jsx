@@ -1,6 +1,6 @@
 import {closeSettings} from '../../reusables/profile-card-functions.jsx';
 import {IoClose} from 'react-icons/io5';
-import React, {useState} from 'react';
+import {useState} from 'react';
 import './change-password.scss';
 import {ShowPasswordButton} from '../../reusables/showPasswordButton.jsx';
 import {useForm} from 'react-hook-form';
@@ -67,7 +67,7 @@ export function ChangePassword() {
 	const updatePassword = async () => {
 		console.log('UpdatePassword function');
 		try {
-			const response = await axios.patch(`${VITE_BACKEND_URL}/api/change-password`, {
+			await axios.patch(`${VITE_BACKEND_URL}/api/change-password`, {
 					oldPassword: watch('currentPassword'),
 					newPassword: watch('newPassword')
 				},
@@ -103,7 +103,7 @@ export function ChangePassword() {
 					autoComplete={'off'}
 					noValidate
 					onSubmit={handleSubmit(() => {
-						updatePassword();
+						updatePassword().catch(error => console.error('Unhandled error at updatePassword: ', error));
 						reset();
 					})}
 				>
@@ -127,7 +127,7 @@ export function ChangePassword() {
 								{...register('currentPassword')}
 								autoComplete={'off'}
 								onBlur={() => {
-									checkPassword();
+									checkPassword().catch(error => console.error('Unhandled error at checkPassword: ', error));
 								}}
 							/>
 							<ShowPasswordButton showPassword={showPassword} setShowPassword={setShowPassword}
@@ -152,7 +152,7 @@ export function ChangePassword() {
 								autoComplete={'off'}
 								onChange={(e) => {
 									setValue('newPassword', e.target.value, {shouldValidate: true}); // Manually update field value
-									trigger('reNewPassword'); // Trigger validation for reNewPassword
+									void trigger('reNewPassword'); // Trigger validation for reNewPassword
 								}}
 							/>
 							<ShowPasswordButton showPassword={showPassword} setShowPassword={setShowPassword}
